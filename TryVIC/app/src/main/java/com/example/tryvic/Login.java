@@ -24,6 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by wujy on 2017/6/26.
+ * 登录页面逻辑，网络请求
  */
 
 public class Login extends AppCompatActivity {

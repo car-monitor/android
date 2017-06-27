@@ -7,6 +7,7 @@ import retrofit2.http.POST;
 
 /**
  * Created by wujy on 2017/6/26.
+ * 网络请求retrofit接口
  */
 
 public interface RetrofitInterface {
