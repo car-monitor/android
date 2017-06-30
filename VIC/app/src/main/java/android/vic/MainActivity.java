@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.MapView;
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -33,7 +34,6 @@ public class MainActivity extends AppCompatActivity
 
         final MapUpdaterThread mapUpdaterThread = new MapUpdaterThread(mapView.getMap(), MainActivity.this);
         mapUpdaterThread.start();
-
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
