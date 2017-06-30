@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.map.MapView;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import rx.functions.Action1;
@@ -27,6 +28,12 @@ public class MainActivity extends AppCompatActivity
         requestPermission();
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main);
+
+        MapView mapView = (MapView) findViewById(R.id.bmapView);
+
+        final MapUpdaterThread mapUpdaterThread = new MapUpdaterThread(mapView.getMap(), MainActivity.this);
+        mapUpdaterThread.start();
+
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
