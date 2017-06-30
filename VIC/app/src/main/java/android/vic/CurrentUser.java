@@ -1,19 +1,7 @@
 package android.vic;
 
-import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
-import android.util.Log;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import android.content.SharedPreferences;
 
 /**
  * 保存用户信息的单例类
@@ -21,70 +9,124 @@ import java.io.IOException;
  */
 
 class CurrentUser {
-    private CurrentUser() {
+    // IP地址，理论上这个东西最后应该要被删除的
+    static String IP = "192.168.1.1";
 
-    }
-
-    static CurrentUser getInstance() {
+    // 获取单例，需要给Context，直接调用getApplicationContext()
+    static CurrentUser getInstance(Context context) {
         if (currentUser == null)
-            currentUser = new CurrentUser();
+            currentUser = new CurrentUser(context);
         return currentUser;
     }
 
-    JSONObject getCacheObject() {
-        // 已经读取过文件并缓存
-        if (cacheObject != null)
-            return cacheObject;
+    // 获取各类信息
+    public String getSessionID()  { return sessionID; }
+    public String getUsername()   { return username; }
+    public int    getId()         { return id; }
+    public String getAuthority()  { return authority; }
+    public String getSex()        { return sex; }
+    public String getDriverType() { return driverType; }
+    public String getIdentify()   { return identify; }
+    public String getPhone()      { return phone; }
+    public String getPhotoURL()   { return photoURL; }
+    public String getAddress()    { return address; }
+    public String getCompany()    { return company; }
+    public String getApartment()  { return apartment; }
+    public int    getJobNo()      { return jobNo; }
 
-        // 检查文件是否存在
-        File cacheFile = new File("assets/cache.json");
-        if (!cacheFile.exists()) {
-            Log.i("Cache", "File is not found, as mean that user has not logan");
-            cacheObject = null;
-        } else try {
-            // 读取整个文件
-            String jsonStr = "";
-            String tmp;
-            BufferedReader reader = new BufferedReader(new FileReader("cache.json"));
-            while ((tmp = reader.readLine()) != null)
-                jsonStr += tmp;
-            reader.close();
-            cacheObject = new JSONObject(jsonStr);
-        } catch (FileNotFoundException e) {
-            cacheObject = null;
-            Log.e("FileIO", "cache.json is not exits");
-            e.printStackTrace();
-        } catch (JSONException e) {
-            cacheObject = null;
-            Log.e("FileIO", "Cannot parse to a json object");
-            e.printStackTrace();
-        } catch (IOException e) {
-            cacheObject = null;
-            Log.e("FileIO", "There is a IO Exception while \"readline()\"");
-            e.printStackTrace();
-        }
-        return cacheObject;
+    // 判断是否已经登录
+    boolean isLogan() { return sessionID != null; }
+
+    // 登录后保存用户信息
+    // 返回值：保存是否成功
+    boolean saveLoginInfo(String username, String sessionID, int id, String authority, int sex,
+                          String driverType, String identify, String phone, String photoURL,
+                          String address, String company, String apartment, int jobNo,
+                          Context context) {
+        this.username     = username;
+        this.sessionID    = sessionID;
+        this.id           = id;
+        this.authority    = authority;
+        this.sex          = sex == 1 ? "男" : "女";
+        this.driverType   = driverType;
+        this.identify     = identify;
+        this.phone        = phone;
+        this.photoURL     = photoURL;
+        this.address      = address;
+        this.company      = company;
+        this.apartment    = apartment;
+        this.jobNo        = jobNo;
+        // 写入文件
+        SharedPreferences preferences = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("username",   username);
+        editor.putString("sessionID",  sessionID);
+        editor.putInt   ("id",         id);
+        editor.putString("authority",  authority);
+        editor.putString("sex",        sex == 1 ? "男" : "女");
+        editor.putString("driverType", driverType);
+        editor.putString("identify",   identify);
+        editor.putString("phone",      phone);
+        editor.putString("photoURL",   photoURL);
+        editor.putString("address",    address);
+        editor.putString("company",    company);
+        editor.putString("apartment",  apartment);
+        editor.putInt   ("jobNo",      jobNo);
+        return editor.commit();
     }
 
-    public boolean setCacheObject(JSONObject cacheObject, Context context) {
-        this.cacheObject = cacheObject;
-        // 直接覆盖式写入
-        try {
-            FileOutputStream outputStream = context.openFileOutput("cache.json", Context.MODE_PRIVATE);
-            outputStream.write(cacheObject.toString().getBytes());
-            outputStream.close();
-            return true;
-        } catch (FileNotFoundException e) {
-            Log.e("FileIO", "Cannot open the file cache.json.");
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            Log.e("FileIO", "Cannot write to the file cache.json.");
-            e.printStackTrace();
-            return false;
-        }
+    boolean clearLoginInfo(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        username   = null;
+        sessionID  = null;
+        id         = -1;
+        authority  = null;
+        sex        = null;
+        driverType = null;
+        identify   = null;
+        phone      = null;
+        photoURL   = null;
+        address    = null;
+        company    = null;
+        apartment  = null;
+        jobNo      = -1;
+        return editor.commit();
     }
 
+    private CurrentUser(Context context) {
+        // 读取文件
+        SharedPreferences preferences = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        username   = preferences.getString ("username"  , null);
+        sessionID  = preferences.getString ("sessionID" , null);
+        id         = preferences.getInt    ("id"        , -1);
+        authority  = preferences.getString ("authority" , null);
+        sex        = preferences.getString ("sex"       , null);
+        driverType = preferences.getString ("driverType", null);
+        identify   = preferences.getString ("identify"  , null);
+        phone      = preferences.getString ("phone"     , null);
+        photoURL   = preferences.getString ("photoURL"  , null);
+        address    = preferences.getString ("address"   , null);
+        company    = preferences.getString ("company"   , null);
+        apartment  = preferences.getString ("apartment" , null);
+        jobNo      = preferences.getInt    ("jobNo"     , -1);
+    }
+
+    // 单例对象
     private static CurrentUser currentUser = null;
-    private JSONObject cacheObject = null;
+    // 保存的参数列表
+    private String username   = null;
+    private String sessionID  = null;
+    private int    id         = -1;
+    private String authority  = null;
+    private String sex        = null;
+    private String driverType = null;
+    private String identify   = null;
+    private String phone      = null;
+    private String photoURL   = null;
+    private String address    = null;
+    private String company    = null;
+    private String apartment  = null;
+    private int    jobNo      = -1;
 }

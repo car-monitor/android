@@ -29,21 +29,18 @@ public class MainActivity extends AppCompatActivity
 
         // 上面是模板自带的
         // TODO 测试用，可删
-        CurrentUser currentUser = CurrentUser.getInstance();
-        JSONObject jsonObject = currentUser.getCacheObject();
-        if (jsonObject != null)
-            Log.e("Main", "getCacheObject() is not null");
-        jsonObject = new JSONObject();
-        try {
-            jsonObject.put("param1", "qwe");
-        } catch (JSONException e) {
-            e.printStackTrace();
+        CurrentUser currentUser = CurrentUser.getInstance(getApplicationContext());
+
+        Log.e("isLogan", currentUser.isLogan() ? "Y" : "N");
+        if (!currentUser.isLogan()) {
+            currentUser.saveLoginInfo("text-username", "text-session", 3, "text-authority", 1, "text-driverType",
+                    "text-Identify", "text-phone", "text-photoURL", "text-address", "text-company", "text-apartment",
+                    123, getApplicationContext());
         }
-        currentUser.setCacheObject(jsonObject, getApplicationContext());
-        jsonObject = currentUser.getCacheObject();
-        Log.e("Main", jsonObject.toString());
-
-
+        Log.e("getSessionID() ", currentUser.getSessionID());
+        currentUser.clearLoginInfo(getApplicationContext());
+        Log.e("isLogan", currentUser.isLogan() ? "Y" : "N");
+        Log.e("getSessionID() ", currentUser.getSessionID());
     }
 
     @Override
