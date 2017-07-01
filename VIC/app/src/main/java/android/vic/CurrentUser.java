@@ -10,7 +10,7 @@ import android.content.SharedPreferences;
 
 class CurrentUser {
     // IP地址，理论上这个东西最后应该要被删除的
-    static String IP = "192.168.1.1";
+    static String IP = "192.168.1.1:8080/";
 
     // 获取单例，需要给Context，直接调用getApplicationContext()
     static CurrentUser getInstance(Context context) {
@@ -33,6 +33,28 @@ class CurrentUser {
     public String getCompany()    { return company; }
     public String getApartment()  { return apartment; }
     public int    getJobNo()      { return jobNo; }
+
+    // 设置单个变量，返回值意味着是否登录，未登录不能修改，且返回值会为false
+    public boolean setSessionID(String sessionID_)   { return sessionID != null && (sessionID  = sessionID_)  != null; }
+    public boolean setUsername(String username_)     { return sessionID != null && (username   = username_)   != null; }
+    public boolean setId(int id_)                    { return sessionID != null && (id         = id_)         != -1; }
+    public boolean setAuthority(String authority_)   { return sessionID != null && (authority  = authority_)  != null; }
+    public boolean setSex(int sex_) {
+        if (sessionID != null && (sex_ == 1 || sex_ == 0)) {
+            sex = sex_ == 1 ? "男" : "女";
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public boolean setDriverType(String driverType_) { return sessionID != null && (driverType = driverType_) != null; }
+    public boolean setIdentify(String identify_)     { return sessionID != null && (identify   = identify_)   != null; }
+    public boolean setPhone(String phone_)           { return sessionID != null && (phone      = phone_)      != null; }
+    public boolean setPhotoURL(String photoURL_)     { return sessionID != null && (photoURL   = photoURL_)   != null; }
+    public boolean setAddress(String address_)       { return sessionID != null && (address    = address_)    != null; }
+    public boolean setCompany(String company_)       { return sessionID != null && (company    = company_)    != null; }
+    public boolean setApartment(String apartment_)   { return sessionID != null && (apartment  = apartment_)  != null; }
+    public boolean setJobNo(int jobNo_)              { return sessionID != null && (jobNo      = jobNo_)      == jobNo; }
 
     // 判断是否已经登录
     boolean isLogan() { return sessionID != null; }

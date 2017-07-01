@@ -38,9 +38,10 @@ public class MainActivity extends AppCompatActivity
                     123, getApplicationContext());
         }
         Log.e("getSessionID() ", currentUser.getSessionID());
+        Log.e("setSessionID()", currentUser.setSessionID("new session") ? currentUser.getSessionID() : "false");
         currentUser.clearLoginInfo(getApplicationContext());
         Log.e("isLogan", currentUser.isLogan() ? "Y" : "N");
-        Log.e("getSessionID() ", currentUser.getSessionID());
+        Log.e("setSessionID()", currentUser.setSessionID("new session") ? currentUser.getSessionID() : "false");
     }
 
     @Override
