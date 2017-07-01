@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.util.SparseArray;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -21,11 +22,16 @@ import com.baidu.mapapi.model.LatLng;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 // 连接远程WebService，获取数据
@@ -40,7 +46,7 @@ interface RouteDBDelegate {
 
 // 顶层模块，调用各模块实现地图更新
 class MapUpdaterThread extends Thread {
-    private final int period = 5000;
+    private final int period = 3000;
     private BaiduMap baiduMap;
     private Activity activity;
     private Handler handler;
@@ -72,7 +78,7 @@ class MapUpdaterThread extends Thread {
                 route.drawSelf();
             }
             routeListManager.updateRouteInfo(getAllRouteInfo(routeDBDelegate));
-            mSleep(3000);
+            mSleep(period);
         }
     }
 
@@ -129,11 +135,7 @@ class Route {
         this.onCarClicked = onCarClicked;
     }
 
-    public RouteInfo getRouteInfo() {
-        return routeInfo;
-    }
-
-    public void setRouteInfo(RouteInfo routeInfo) {
+    void setRouteInfo(RouteInfo routeInfo) {
         this.routeInfo = routeInfo;
     }
 
@@ -267,12 +269,7 @@ class MapSDK {
 
 // 测试用
 class RouteDBDelegateStub implements RouteDBDelegate {
-    private final String hostName;
-    int timer = 0;
-
-    RouteDBDelegateStub() {
-        this.hostName = "localhost";
-    }
+    private int timer = 0;
 
     public List<RouteInfo> getAllRouteInfo() throws IOException, ParseException {
         List<RouteInfo> routeInfoList = new LinkedList<>();
@@ -299,8 +296,8 @@ class RouteDBDelegateStub implements RouteDBDelegate {
             timestampList2.add(new Timestamp(System.currentTimeMillis() - 2 * 60 * 1000 + timer * 1000));
         }
 
-        sectionList1.add(new RouteSectionInfo(1, pathList1));
-        sectionList1.add(new RouteSectionInfo(2, pathList2));
+        sectionList1.add(new RouteSectionInfo(1, pathList1, timestampList1));
+        sectionList1.add(new RouteSectionInfo(2, pathList2, timestampList2));
         routeInfoList.add(new RouteInfo(101, sectionList1));
 
 
@@ -321,6 +318,67 @@ class RouteDBDelegateStub implements RouteDBDelegate {
     }
 }
 
+class RouteDBDelegateImpl implements RouteDBDelegate {
+    static private final String hostname = "localhost";
+    static private final String GET_ALL_ORDERS = "getorders";
+    private final OkHttpClient client = new OkHttpClient();
+
+    @Override
+    public List<RouteInfo> getAllRouteInfo() throws IOException, ParseException {
+        Response rawResponse = getDataFromServer();
+        GetOrderResponse rsp = parseJSON(rawResponse.body().string());
+
+        if (rsp.status == 0)
+            throw new IOException("获取运单数据失败");
+
+        List<RouteInfo> routeInfos = new LinkedList<>();
+        for (OrderDetail order : rsp.orderdetails) {
+            int id = order.order.id;
+            List<LocRecord> route = order.route;
+            List<LatLng> path = new ArrayList<>();
+
+            for (int i = 0; i < route.size(); i++) {
+                LocRecord loc = route.get(i);
+                CoordinateConverter.CoordinateType type = null;
+                switch (loc.coordinateType) {
+                    case "BD-09":
+                        type = CoordinateConverter.CoordinateType.BD_09;
+                        break;
+                    case "GCJ-05":
+                        type = CoordinateConverter.CoordinateType.GCJ_05;
+                        break;
+                    case "WGS":
+                        type = CoordinateConverter.CoordinateType.WGS;
+                        break;
+                    default:
+                        throw new ParseException("Unknown Coordinate Type", 0);
+                }
+
+                path.add(CoordinateConverter.convert(
+                        new LatLng(route.get(i).latitude, route.get(i).longitude),
+                        type));
+            }
+
+            List<RouteSectionInfo> sectionInfos = new LinkedList<>();
+            sectionInfos.add(new RouteSectionInfo(NoRepeatRandom.gen(), path));
+            routeInfos.add(new RouteInfo(id, sectionInfos));
+        }
+
+        return routeInfos;
+    }
+
+    private Response getDataFromServer() throws IOException {
+        Request request = new Request.Builder().get()
+                .url(String.format("http://%s/%s", hostname, GET_ALL_ORDERS))
+                .build();
+        return client.newCall(request).execute();
+    }
+
+    private GetOrderResponse parseJSON(String json) throws ParseException {
+        return JSON.parseObject(json, GetOrderResponse.class);
+    }
+}
+
 
 class NoRepeatRandom {
     private static Set<Integer> integerSet = new HashSet<>();
@@ -336,12 +394,29 @@ class NoRepeatRandom {
     }
 }
 
+class CoordinateConverter {
+    static LatLng convert(LatLng point, CoordinateType from) {
+        com.baidu.mapapi.utils.CoordinateConverter converter = new com.baidu.mapapi.utils.CoordinateConverter();
+        if (from.equals(CoordinateType.GCJ_05))
+            converter.from(com.baidu.mapapi.utils.CoordinateConverter.CoordType.COMMON);
+        else if (from.equals(CoordinateType.WGS))
+            converter.from(com.baidu.mapapi.utils.CoordinateConverter.CoordType.GPS);
+        else
+            return point;
+
+        converter.coord(point);
+        return converter.convert();
+    }
+
+    enum CoordinateType {BD_09, GCJ_05, WGS}
+}
+
 // 保存自身位置和路径
 class RouteInfo {
-    int id;
-    List<RouteSectionInfo> routeSectionInfoList;
+    private int id;
+    private List<RouteSectionInfo> routeSectionInfoList;
 
-    public RouteInfo(int id, List<RouteSectionInfo> routeSectionInfoList) {
+    RouteInfo(int id, List<RouteSectionInfo> routeSectionInfoList) {
         this.id = id;
         this.routeSectionInfoList = routeSectionInfoList;
     }
@@ -354,7 +429,7 @@ class RouteInfo {
         this.id = id;
     }
 
-    public List<RouteSectionInfo> getRouteSectionInfoList() {
+    List<RouteSectionInfo> getRouteSectionInfoList() {
         return routeSectionInfoList;
     }
 
@@ -365,21 +440,21 @@ class RouteInfo {
 
 // 一条Route由不同的Section组成。每个Sectino对应一个司机。一个司机可以对应多个Section。
 class RouteSectionInfo {
-    int section_id;
-    List<LatLng> path;
-    List<Timestamp> timestampList;  // optional
+    private int section_id;
+    private List<LatLng> path;
+    private List<Timestamp> timestampList;  // optional
 
-    public RouteSectionInfo(int section_id, List<LatLng> path) {
+    RouteSectionInfo(int section_id, List<LatLng> path) {
         this.section_id = section_id;
         this.path = path;
     }
 
-    public RouteSectionInfo(int section_id, List<LatLng> path, List<Timestamp> timestampList) {
+    RouteSectionInfo(int section_id, List<LatLng> path, List<Timestamp> timestampList) {
         this(section_id, path);
         this.timestampList = timestampList;
     }
 
-    public List<LatLng> getPath() {
+    List<LatLng> getPath() {
         return path;
     }
 
@@ -447,4 +522,51 @@ class RouteBuilder {
     Route getInstance(RouteInfo routeInfo) {
         return new Route(routeInfo, this.mapSDK, this.callback);
     }
+}
+
+class GetOrderResponse {
+    int status;
+    List<OrderDetail> orderdetails;
+}
+
+class OrderDetail {
+    Order order;
+    List<LocRecord> route;
+}
+
+class Order {
+    int id;
+    int carID;
+    int driverId;
+    String startSite;
+    String coordinateType;
+    String locationType;
+    double startLongitude;
+    double startLatitude;
+    double endLongitude;
+    double endLatitude;
+    int isFinished;
+    String startTime;
+    String endTime;
+    String addressorName;
+    String addressorPhone;
+    String addressorAddress;
+    String addresseeName;
+    String addresseePhone;
+    String addresseeAddress;
+    String sealExpect;
+    String sealCurrent;
+}
+
+class LocRecord {
+    int id;
+    int carID;
+    int waybillID;
+    String time;
+    String coordinateType;
+    String locationType;
+    double longitude;
+    double latitude;
+    int driverId;
+    String photoURL;
 }
