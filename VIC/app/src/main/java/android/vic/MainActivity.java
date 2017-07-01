@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity
 
         MapView mapView = (MapView) findViewById(R.id.bmapView);
 
-        final MapUpdaterThread mapUpdaterThread = new MapUpdaterThread(mapView.getMap(), MainActivity.this);
+        final MapUpdaterThread mapUpdaterThread = new MapUpdaterThread(mapView.getMap(), MainActivity.this, handler);
         mapUpdaterThread.start();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
