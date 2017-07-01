@@ -11,8 +11,12 @@ public class CarDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
-        int id = bundle.getInt("id");
-        Toast.makeText(CarDetailActivity.this, "CarId:" + Integer.toString(id), Toast.LENGTH_LONG).show();
+        int car_id = bundle.getInt("car_id");
+        int driver_id = bundle.getInt("driver_id");
+        int order_id = bundle.getInt("order_id");
+        Toast.makeText(CarDetailActivity.this,
+                String.format("car_id:%d\ndriver_id:%d\norder_id:%d", car_id, driver_id, order_id),
+                Toast.LENGTH_LONG).show();
         setContentView(R.layout.activity_new);
     }
 }

@@ -12,12 +12,14 @@ import com.alibaba.fastjson.JSON;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.PolylineOptions;
-import com.baidu.mapapi.model.LatLng;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -60,6 +62,7 @@ class MapUpdaterThread extends Thread {
     @Override
     public void run() {
         MapSDK mapSDK = new MapSDK(baiduMap);
+        mapSDK.centerView(new LatLng(23.16, 113.23));
         RouteBuilder routeBuilder = new RouteBuilder(mapSDK, new Route.Callback() {
             @Override
             public void handleMessage(Bundle bundle) {
@@ -153,7 +156,11 @@ class Route {
                 car_marker_id = mapSDK.drawPoint(curPoint, trunkImage, new MapSDK.Callback() {
                     @Override
                     public void handleMessage(Bundle bundle) {
-                        bundle.putInt("id", Route.this.routeInfo.getId());
+                        List<RouteSectionInfo> secList = Route.this.routeInfo.getRouteSectionInfoList();
+                        RouteSectionInfo lastSec = secList.get(secList.size() - 1);
+                        bundle.putInt("order_id", Route.this.routeInfo.getId());
+                        bundle.putInt("car_id", lastSec.getCar_id());
+                        bundle.putInt("driver_id", lastSec.getDriver_id());
                         Route.this.onCarClicked.handleMessage(bundle);
                     }
                 });
@@ -210,7 +217,7 @@ class MapSDK {
         bundle.putInt("marker_id", marker_id);
 
         OverlayOptions ooPolyline = new PolylineOptions().width(20).extraInfo(bundle)
-                .color(color).points(path);
+                .color(color).points(convert(path));
         Overlay overlay = baiduMap.addOverlay(ooPolyline);
 
         polylineMap.put(marker_id, overlay);
@@ -229,7 +236,7 @@ class MapSDK {
         Bundle bundle = new Bundle();
         bundle.putInt("marker_id", marker_id);
 
-        OverlayOptions ooDot = new MarkerOptions().icon(pointImage).position(point).extraInfo(bundle);
+        OverlayOptions ooDot = new MarkerOptions().icon(pointImage).position(convert(point)).extraInfo(bundle);
         Overlay overlay = baiduMap.addOverlay(ooDot);
 
         pointMap.put(marker_id, overlay);
@@ -262,6 +269,25 @@ class MapSDK {
         return true;
     }
 
+    void centerView(LatLng center) {
+        MapStatus mMapstatus = new MapStatus.Builder().target(convert(center)).build();
+        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mMapstatus);
+        baiduMap.setMapStatus(mapStatusUpdate);
+    }
+
+    private com.baidu.mapapi.model.LatLng convert(LatLng point) {
+        return new com.baidu.mapapi.model.LatLng(point.latitude, point.longitude);
+    }
+
+    private List<com.baidu.mapapi.model.LatLng> convert(List<LatLng> points) {
+        List<com.baidu.mapapi.model.LatLng> newList = new LinkedList<>();
+        for (int i = 0; i < points.size(); i++) {
+            LatLng p = points.get(i);
+            newList.add(convert(p));
+        }
+        return newList;
+    }
+
     interface Callback {
         void handleMessage(Bundle bundle);
     }
@@ -282,35 +308,41 @@ class RouteDBDelegateStub implements RouteDBDelegate {
         List<RouteSectionInfo> sectionList1 = new LinkedList<>();
         List<RouteSectionInfo> sectionList2 = new LinkedList<>();
 
-        pathList1.add(new LatLng(39.921634, 116.413039));
-        pathList1.add(new LatLng(39.921781, 116.417611));
-        pathList2.add(new LatLng(39.924843, 116.417566));
-        pathList2.add(new LatLng(39.925037, 116.423926));
+        pathList1.add(new LatLng(23.116326, 113.190565));
+        pathList1.add(new LatLng(23.116293, 113.192923));
+        pathList2.add(new LatLng(23.118641, 113.192892));
+        pathList2.add(new LatLng(23.118553, 113.19437));
         timestampList1.add(new Timestamp(System.currentTimeMillis() - 5 * 60 * 1000));
         timestampList1.add(new Timestamp(System.currentTimeMillis() - 4 * 60 * 1000));
         timestampList1.add(new Timestamp(System.currentTimeMillis() - 3 * 60 * 1000));
         timestampList1.add(new Timestamp(System.currentTimeMillis() - 2 * 60 * 1000));
 
         for (int t = 0; t < timer; t++) {
-            pathList2.add(new LatLng(39.925037, 116.423926 + timer * 0.001));
+            pathList2.add(new LatLng(23.118553, 113.19437 + timer * 0.001));
             timestampList2.add(new Timestamp(System.currentTimeMillis() - 2 * 60 * 1000 + timer * 1000));
         }
 
         sectionList1.add(new RouteSectionInfo(1, pathList1, timestampList1));
         sectionList1.add(new RouteSectionInfo(2, pathList2, timestampList2));
+        sectionList1.get(0).setCar_id(200);
+        sectionList1.get(1).setCar_id(300);
+        sectionList1.get(0).setDriver_id(2000);
+        sectionList1.get(1).setDriver_id(3000);
         routeInfoList.add(new RouteInfo(101, sectionList1));
 
 
-        pathList3.add(new LatLng(39.914568, 116.424804));
-        pathList3.add(new LatLng(39.914568, 116.423484));
+        pathList3.add(new LatLng(23.146831, 113.321781));
+        pathList3.add(new LatLng(23.146873, 113.323771));
         timestampList3.add(new Timestamp(System.currentTimeMillis() - 3 * 60 * 1000));
         timestampList3.add(new Timestamp(System.currentTimeMillis() - 2 * 60 * 1000));
         for (int t = 0; t < timer; t++) {
-            pathList3.add(new LatLng(39.914568, 116.423484 + timer * 0.001));
+            pathList3.add(new LatLng(23.146873, 113.323771 + timer * 0.001));
             timestampList3.add(new Timestamp(System.currentTimeMillis() - 2 * 60 * 1000 + timer * 1000));
         }
 
         sectionList2.add(new RouteSectionInfo(3, pathList3, timestampList3));
+        sectionList2.get(0).setCar_id(400);
+        sectionList2.get(0).setDriver_id(4000);
         routeInfoList.add(new RouteInfo(102, sectionList2));
 
         timer++;
@@ -360,7 +392,10 @@ class RouteDBDelegateImpl implements RouteDBDelegate {
             }
 
             List<RouteSectionInfo> sectionInfos = new LinkedList<>();
-            sectionInfos.add(new RouteSectionInfo(NoRepeatRandom.gen(), path));
+            RouteSectionInfo sec = new RouteSectionInfo(NoRepeatRandom.gen(), path);
+            sec.setCar_id(order.order.carID);
+            sec.setDriver_id(order.order.driverId);
+            sectionInfos.add(sec);
             routeInfos.add(new RouteInfo(id, sectionInfos));
         }
 
@@ -404,8 +439,9 @@ class CoordinateConverter {
         else
             return point;
 
-        converter.coord(point);
-        return converter.convert();
+        converter.coord(new com.baidu.mapapi.model.LatLng(point.latitude, point.longitude));
+        com.baidu.mapapi.model.LatLng ll = converter.convert();
+        return new LatLng(ll.longitude, ll.latitude);
     }
 
     enum CoordinateType {BD_09, GCJ_05, WGS}
@@ -441,6 +477,8 @@ class RouteInfo {
 // 一条Route由不同的Section组成。每个Sectino对应一个司机。一个司机可以对应多个Section。
 class RouteSectionInfo {
     private int section_id;
+    private int driver_id;
+    private int car_id;
     private List<LatLng> path;
     private List<Timestamp> timestampList;  // optional
 
@@ -452,6 +490,22 @@ class RouteSectionInfo {
     RouteSectionInfo(int section_id, List<LatLng> path, List<Timestamp> timestampList) {
         this(section_id, path);
         this.timestampList = timestampList;
+    }
+
+    public int getDriver_id() {
+        return driver_id;
+    }
+
+    public void setDriver_id(int driver_id) {
+        this.driver_id = driver_id;
+    }
+
+    public int getCar_id() {
+        return car_id;
+    }
+
+    public void setCar_id(int car_id) {
+        this.car_id = car_id;
     }
 
     List<LatLng> getPath() {
@@ -569,4 +623,14 @@ class LocRecord {
     double latitude;
     int driverId;
     String photoURL;
+}
+
+class LatLng {
+    double longitude;
+    double latitude;
+
+    LatLng(double latitude, double longitude) {
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
 }
