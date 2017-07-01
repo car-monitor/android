@@ -1,23 +1,37 @@
 package android.vic;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private TextView     textView_City        = null;
+    private ImageButton  imageButton_icon     = null;
+    private ImageButton  message_icon         = null;
+    private DrawerLayout drawerLayout         = null;
+    private ImageButton  imageButton_nav_icon = null;
+    private Button       button_nav_userName  = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,20 +42,41 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // 上面是模板自带的
-        // TODO 测试用，可删
-        CurrentUser currentUser = CurrentUser.getInstance(getApplicationContext());
+        // 获取元素
+        textView_City        = (TextView    )findViewById(R.id.city);
+        imageButton_icon     = (ImageButton )findViewById(R.id.main_user);
+        message_icon         = (ImageButton )findViewById(R.id.message);
+        drawerLayout         = (DrawerLayout)findViewById(R.id.drawer_layout);
 
-        Log.e("isLogan", currentUser.isLogan() ? "Y" : "N");
-        if (!currentUser.isLogan()) {
-            currentUser.saveLoginInfo("text-username", "text-session", 3, 1, 1, "text-driverType",
-                    "text-Identify", "text-phone", "text-photoURL", "text-address", "text-company", "text-apartment",
-                    123, getApplicationContext());
-        }
-        Log.e("isLogan", currentUser.isLogan() ? "Y" : "N");
-        Log.e("get() ", currentUser.getAuthority());
-        Log.e("set()", currentUser.setAuthority(2) ? currentUser.getAuthority() : "false");
-        currentUser.clearLoginInfo(getApplicationContext());
-        Log.e("isLogan", currentUser.isLogan() ? "Y" : "N");
+        View headerLayout = navigationView.getHeaderView(0);
+        imageButton_nav_icon = (ImageButton )headerLayout.findViewById(R.id.nav_bar_icon);
+        button_nav_userName  = (Button      )headerLayout.findViewById(R.id.nav_bar_username);
+
+        // 事件绑定
+        View.OnClickListener toUserInfo = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO 跳转个人信息页面
+            }
+        };
+        imageButton_nav_icon.setOnClickListener(toUserInfo);
+        button_nav_userName.setOnClickListener(toUserInfo);
+
+        imageButton_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(Gravity.START, true);
+            }
+        });
+
+        message_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO 跳转消息列表页面
+            }
+        });
+
+        // TODO yzy在main页面的操作可以写到这里来
     }
 
     @Override
@@ -54,50 +89,68 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
+    // 菜单各项的操作
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.nav_cars) {
+            // TODO 跳转到车辆列表页面
+        } else if (id == R.id.nav_drivers) {
+            // TODO 跳转到驾驶员列表页面
+        } else if (id == R.id.nav_bill) {
+            // TODO 跳转到订单列表页面
+        } else if (id == R.id.nav_exit) {
+            // 登出
+            Logout logoutTask = new Logout();
+            logoutTask.execute();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private class Logout extends AsyncTask<Void, Void, Boolean> {
+        // TODO 未完成
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            HttpURLConnection connection = null;
+            try {
+                URL url = new URL("http://" + CurrentUser.IP + "logout");
+                connection = (HttpURLConnection)url.openConnection();
+                connection.setRequestMethod("GET");
+                // connection.
+
+            } catch (MalformedURLException e) {
+                Log.e("Main", "Logout URL is useless");
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null)
+                    connection.disconnect();
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean status) {
+            if (status) {
+                Toast.makeText(getApplicationContext(), "登出成功", Toast.LENGTH_SHORT).show();
+                CurrentUser.getInstance(getApplicationContext()).clearLoginInfo(getApplicationContext());
+                // TODO 跳转到登录页面
+                //Intent intent = new Intent(this, )
+
+            }
+        }
     }
 }

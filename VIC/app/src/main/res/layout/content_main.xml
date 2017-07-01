@@ -1,13 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="android.vic.MainActivity"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
-    <!--tools:showIn="@layout/activity_main">-->
+    android:orientation="vertical"
+    tools:context="android.vic.MainActivity"
+    tools:showIn="@layout/activity_main">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"/>
-</RelativeLayout>
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <ImageButton
+            android:id="@+id/main_user"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@color/Transparency"
+            android:padding="5dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/user" />
+
+        <TextView
+            android:id="@+id/city"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="2"
+            android:text="城市"
+            android:textAlignment="center"
+            android:textSize="@dimen/main_textSize" />
+
+        <ImageButton
+            android:id="@+id/message"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@color/Transparency"
+            android:padding="5dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/message" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#000000" />
+
+    <!--TODO yzy看这里，用你的地图代替这个View-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:background="#b5b5b5" />
+
+</LinearLayout>

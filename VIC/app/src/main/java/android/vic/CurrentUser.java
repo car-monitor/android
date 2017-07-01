@@ -3,11 +3,6 @@ package android.vic;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.ArrayMap;
-import android.util.SparseArray;
-
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 保存用户信息的单例类
  * Created by Guobao Xu on 2017/6/30.
