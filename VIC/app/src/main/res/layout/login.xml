@@ -3,7 +3,7 @@
     android:id="@+id/layout_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f8f8f8" >
+    android:background="#f8f8f8">
 
     <ImageView
         android:id="@+id/iv_logo"
@@ -12,7 +12,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:src="@mipmap/icon"
-        />
+        android:contentDescription="@string/icon_tip" />
 
     <LinearLayout
         android:id="@+id/input_layout"
@@ -20,29 +20,31 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/iv_logo"
         android:layout_marginTop="10dp"
-        android:orientation="vertical" >
+        android:orientation="vertical">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="汽车监控系统"
+            android:layout_gravity="center"
+            android:text="@string/vic_chn"
             android:textSize="30sp"
-            android:layout_gravity="center"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
+
         <ImageView
-            android:visibility="invisible"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:id="@+id/img_loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/img_loading"
-            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
             android:src="@drawable/loading"
-            android:layout_marginBottom="10dp"/>
+            android:visibility="invisible"
+            android:contentDescription="@string/login" />
+
         <android.vic.UI.CleanEditText
             android:id="@+id/et_username"
             style="@style/login_edit_style"
-            android:hint="@string/username"
-            />
+            android:hint="@string/username" />
 
         <View
             android:layout_width="match_parent"
@@ -67,6 +69,6 @@
         android:text="@string/login"
         android:textColor="#5c5c5c"
         android:textSize="25sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
 </RelativeLayout>

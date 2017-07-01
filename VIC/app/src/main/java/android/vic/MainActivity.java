@@ -1,9 +1,12 @@
 package android.vic;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,7 +21,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,11 +35,7 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private TextView     textView_City        = null;
-    private ImageButton  imageButton_icon     = null;
-    private ImageButton  message_icon         = null;
     private DrawerLayout drawerLayout         = null;
-    private ImageButton  imageButton_nav_icon = null;
-    private Button       button_nav_userName  = null;
 
 
     @Override
@@ -44,19 +49,20 @@ public class MainActivity extends AppCompatActivity
         // 上面是模板自带的
         // 获取元素
         textView_City        = (TextView    )findViewById(R.id.city);
-        imageButton_icon     = (ImageButton )findViewById(R.id.main_user);
-        message_icon         = (ImageButton )findViewById(R.id.message);
+        ImageButton imageButton_icon = (ImageButton) findViewById(R.id.main_user);
+        ImageButton message_icon = (ImageButton) findViewById(R.id.message);
         drawerLayout         = (DrawerLayout)findViewById(R.id.drawer_layout);
 
         View headerLayout = navigationView.getHeaderView(0);
-        imageButton_nav_icon = (ImageButton )headerLayout.findViewById(R.id.nav_bar_icon);
-        button_nav_userName  = (Button      )headerLayout.findViewById(R.id.nav_bar_username);
+        ImageButton imageButton_nav_icon = (ImageButton) headerLayout.findViewById(R.id.nav_bar_icon);
+        Button button_nav_userName = (Button) headerLayout.findViewById(R.id.nav_bar_username);
 
         // 事件绑定
         View.OnClickListener toUserInfo = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO 跳转个人信息页面
+                Intent intent = new Intent(MainActivity.this, ShowUserInfo.class);
+                startActivity(intent);
             }
         };
         imageButton_nav_icon.setOnClickListener(toUserInfo);
@@ -79,20 +85,37 @@ public class MainActivity extends AppCompatActivity
         // TODO yzy在main页面的操作可以写到这里来
     }
 
+    // 返回键事件
+    private long timestamp = 0;
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
+        // 如果有弹窗，什么都不管
+        if (dialog != null && dialog.isShowing()) {
             super.onBackPressed();
+            return;
+        }
+
+        // 如果开着侧滑，关闭侧滑
+        if (drawerLayout!= null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return;
+        }
+
+        // 其他情况下，双击退出
+        if (timestamp == 0) {
+            Toast.makeText(MainActivity.this, "再次点击返回键可退出", Toast.LENGTH_SHORT).show();
+            timestamp = System.currentTimeMillis();
+        } else if (System.currentTimeMillis() - timestamp <= Toast.LENGTH_SHORT) {
+            System.exit(0);
+        } else {
+            timestamp = System.currentTimeMillis();
         }
     }
 
     // 菜单各项的操作
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -113,12 +136,15 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private Dialog dialog = null;
     private class Logout extends AsyncTask<Void, Void, Boolean> {
-        // TODO 未完成
 
         @Override
         protected void onPreExecute() {
-            super.onPreExecute();
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setView(R.layout.logouting_dialog);
+            dialog = builder.create();
+            dialog.show();
         }
 
         @Override
@@ -127,13 +153,32 @@ public class MainActivity extends AppCompatActivity
             try {
                 URL url = new URL("http://" + CurrentUser.IP + "logout");
                 connection = (HttpURLConnection)url.openConnection();
+                connection.setConnectTimeout(4000);
                 connection.setRequestMethod("GET");
-                // connection.
+                connection.setRequestProperty("Cookie", CurrentUser.getInstance(getApplicationContext()).getSessionID());
+                connection.connect();
 
+                int statusCode = connection.getResponseCode();
+                if (statusCode == 404) {
+                    return false;
+                } else {
+                    String tmp;
+                    String responseStr = "";
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    while ((tmp = reader.readLine()) != null)
+                        responseStr += tmp;
+                    connection.disconnect();
+                    JSONObject object = new JSONObject(responseStr);
+                    return object.getInt("status") == 1;
+                }
             } catch (MalformedURLException e) {
                 Log.e("Main", "Logout URL is useless");
                 e.printStackTrace();
             } catch (IOException e) {
+                Log.e("Main", "Logout IO is false");
+                e.printStackTrace();
+            } catch (JSONException e) {
+                Log.e("Main", "Response is not a json");
                 e.printStackTrace();
             } finally {
                 if (connection != null)
@@ -144,12 +189,19 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(Boolean status) {
+            if (dialog != null && dialog.isShowing()) {
+                dialog.cancel();
+            }
             if (status) {
                 Toast.makeText(getApplicationContext(), "登出成功", Toast.LENGTH_SHORT).show();
                 CurrentUser.getInstance(getApplicationContext()).clearLoginInfo(getApplicationContext());
-                // TODO 跳转到登录页面
-                //Intent intent = new Intent(this, )
-
+                Intent intent = new Intent(MainActivity.this, Login.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(getApplicationContext(), "登出失败", Toast.LENGTH_SHORT).show();
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.cancel();
+                }
             }
         }
     }
