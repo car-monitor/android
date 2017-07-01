@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f8f8f8" >
+
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:src="@mipmap/icon"
+        />
+
+    <LinearLayout
+        android:id="@+id/input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv_logo"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="汽车监控系统"
+            android:textSize="30sp"
+            android:layout_gravity="center"
+            android:textStyle="bold"/>
+        <ImageView
+            android:visibility="invisible"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/img_loading"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/loading"
+            android:layout_marginBottom="10dp"/>
+        <android.vic.UI.CleanEditText
+            android:id="@+id/et_username"
+            style="@style/login_edit_style"
+            android:hint="@string/username"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#f8f8f8" />
+
+        <android.vic.UI.CleanEditText
+            android:id="@+id/et_password"
+            style="@style/login_edit_style"
+            android:hint="@string/password"
+            android:inputType="textPassword" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/btn_login_selector"
+        android:text="@string/login"
+        android:textColor="#5c5c5c"
+        android:textSize="25sp"
+        android:textStyle="bold"/>
+
+</RelativeLayout>
