@@ -33,15 +33,15 @@ public class MainActivity extends AppCompatActivity
 
         Log.e("isLogan", currentUser.isLogan() ? "Y" : "N");
         if (!currentUser.isLogan()) {
-            currentUser.saveLoginInfo("text-username", "text-session", 3, "text-authority", 1, "text-driverType",
+            currentUser.saveLoginInfo("text-username", "text-session", 3, 1, 1, "text-driverType",
                     "text-Identify", "text-phone", "text-photoURL", "text-address", "text-company", "text-apartment",
                     123, getApplicationContext());
         }
-        Log.e("getSessionID() ", currentUser.getSessionID());
-        Log.e("setSessionID()", currentUser.setSessionID("new session") ? currentUser.getSessionID() : "false");
+        Log.e("isLogan", currentUser.isLogan() ? "Y" : "N");
+        Log.e("get() ", currentUser.getAuthority());
+        Log.e("set()", currentUser.setAuthority(2) ? currentUser.getAuthority() : "false");
         currentUser.clearLoginInfo(getApplicationContext());
         Log.e("isLogan", currentUser.isLogan() ? "Y" : "N");
-        Log.e("setSessionID()", currentUser.setSessionID("new session") ? currentUser.getSessionID() : "false");
     }
 
     @Override

@@ -2,6 +2,11 @@ package android.vic;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.ArrayMap;
+import android.util.SparseArray;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 保存用户信息的单例类
@@ -14,8 +19,14 @@ class CurrentUser {
 
     // 获取单例，需要给Context，直接调用getApplicationContext()
     static CurrentUser getInstance(Context context) {
-        if (currentUser == null)
+        if (currentUser == null) {
             currentUser = new CurrentUser(context);
+            AuthorityDict = new ArrayMap<>();
+            AuthorityDict.put(0, "普通用户");
+            AuthorityDict.put(1, "司机");
+            AuthorityDict.put(2, "管理员");
+            AuthorityDict.put(3, "超级管理员");
+        }
         return currentUser;
     }
 
@@ -38,7 +49,14 @@ class CurrentUser {
     public boolean setSessionID(String sessionID_)   { return sessionID != null && (sessionID  = sessionID_)  != null; }
     public boolean setUsername(String username_)     { return sessionID != null && (username   = username_)   != null; }
     public boolean setId(int id_)                    { return sessionID != null && (id         = id_)         != -1; }
-    public boolean setAuthority(String authority_)   { return sessionID != null && (authority  = authority_)  != null; }
+    // 网络接口提供权限和性别给的是int，但是这个类里保存为string
+    public boolean setAuthority(int authority_) {
+        if (sessionID != null && authority_ < 4 && authority_ >= 0) {
+            authority = AuthorityDict.get(authority_);
+            return true;
+        }
+        return false;
+    }
     public boolean setSex(int sex_) {
         if (sessionID != null && (sex_ == 1 || sex_ == 0)) {
             sex = sex_ == 1 ? "男" : "女";
@@ -61,15 +79,15 @@ class CurrentUser {
 
     // 登录后保存用户信息
     // 返回值：保存是否成功
-    boolean saveLoginInfo(String username, String sessionID, int id, String authority, int sex,
+    boolean saveLoginInfo(String username, String sessionID, int id, int authority, int sex,
                           String driverType, String identify, String phone, String photoURL,
                           String address, String company, String apartment, int jobNo,
                           Context context) {
         this.username     = username;
         this.sessionID    = sessionID;
         this.id           = id;
-        this.authority    = authority;
-        this.sex          = sex == 1 ? "男" : "女";
+        if (authority >= 0 && authority <= 3) this.authority = AuthorityDict.get(authority);
+        if (authority == 0 || authority == 1) this.sex       = sex == 1 ? "男" : "女";
         this.driverType   = driverType;
         this.identify     = identify;
         this.phone        = phone;
@@ -81,19 +99,19 @@ class CurrentUser {
         // 写入文件
         SharedPreferences preferences = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("username",   username);
-        editor.putString("sessionID",  sessionID);
-        editor.putInt   ("id",         id);
-        editor.putString("authority",  authority);
-        editor.putString("sex",        sex == 1 ? "男" : "女");
-        editor.putString("driverType", driverType);
-        editor.putString("identify",   identify);
-        editor.putString("phone",      phone);
-        editor.putString("photoURL",   photoURL);
-        editor.putString("address",    address);
-        editor.putString("company",    company);
-        editor.putString("apartment",  apartment);
-        editor.putInt   ("jobNo",      jobNo);
+        editor.putString("username",   this.username);
+        editor.putString("sessionID",  this.sessionID);
+        editor.putInt   ("id",         this.id);
+        editor.putString("authority",  this.authority);
+        editor.putString("sex",        this.sex);
+        editor.putString("driverType", this.driverType);
+        editor.putString("identify",   this.identify);
+        editor.putString("phone",      this.phone);
+        editor.putString("photoURL",   this.photoURL);
+        editor.putString("address",    this.address);
+        editor.putString("company",    this.company);
+        editor.putString("apartment",  this.apartment);
+        editor.putInt   ("jobNo",      this.jobNo);
         return editor.commit();
     }
 
@@ -151,4 +169,6 @@ class CurrentUser {
     private String company    = null;
     private String apartment  = null;
     private int    jobNo      = -1;
+    // 权限的枚举
+    private static ArrayMap<Integer, String> AuthorityDict;
 }
