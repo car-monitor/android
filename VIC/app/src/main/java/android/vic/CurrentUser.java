@@ -3,12 +3,14 @@ package android.vic;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.ArrayMap;
+
 /**
  * 保存用户信息的单例类
  * Created by Guobao Xu on 2017/6/30.
  */
 
 class CurrentUser {
+
     // IP地址，理论上这个东西最后应该要被删除的
     static String IP = "192.168.1.1:8080/";
 
@@ -166,4 +168,5 @@ class CurrentUser {
     private int    jobNo      = -1;
     // 权限的枚举
     private static ArrayMap<Integer, String> AuthorityDict;
+
 }
