@@ -1,9 +1,5 @@
 package android.vic;
 
-/**
- * Created by wujy on 2017/7/1.
- */
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
@@ -34,14 +30,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class Login extends AppCompatActivity {
-    public String IP = "http://192.168.1.57:3000/";
-    public static final String Preference_Name = "loginState";
     public Button login;
     public EditText username, password;
     public ImageView imgView;
     public AnimationDrawable animationDrawable;
     public Context context;
-    public String company,department;
+    public String company, department;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +45,21 @@ public class Login extends AppCompatActivity {
         company = "default";
         department = "default";
         initView();
-        addListenner();
+        addListener();
+    }
+
+    // 双击退出
+    private long timestamp = 0;
+    @Override
+    public void onBackPressed() {
+        if (timestamp == 0) {
+            Toast.makeText(Login.this, "再次点击返回键可退出", Toast.LENGTH_SHORT).show();
+            timestamp = System.currentTimeMillis();
+        } else if (System.currentTimeMillis() - timestamp <= Toast.LENGTH_SHORT) {
+            System.exit(0);
+        } else {
+            timestamp = System.currentTimeMillis();
+        }
     }
 
     private void initView() {
@@ -61,7 +70,7 @@ public class Login extends AppCompatActivity {
         animationDrawable = (AnimationDrawable) imgView.getDrawable();
     }
 
-    private void addListenner() {
+    private void addListener() {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,7 +93,7 @@ public class Login extends AppCompatActivity {
                 .readTimeout(4, TimeUnit.SECONDS)
                 .build();
         Toast.makeText(Login.this, "正在登录...", Toast.LENGTH_SHORT).show();
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(IP).addConverterFactory(GsonConverterFactory.create()).client(client).build();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(CurrentUser.IP).addConverterFactory(GsonConverterFactory.create()).client(client).build();
         RetrofitInterface service = retrofit.create(RetrofitInterface.class);
         Call<LoginRetro> call = service.login(username, password);
         call.enqueue(new Callback<LoginRetro>() {
@@ -99,7 +108,7 @@ public class Login extends AppCompatActivity {
 
                         animationDrawable.stop();
                         imgView.setVisibility(View.INVISIBLE);
-                        CurrentUser.getInstance(context).saveLoginInfo(username,response.headers().get("sessionID"),response.body().user.id,response.body().user.authority,response.body().user.sex,response.body().user.driverType,response.body().user.identify,response.body().user.phone,response.body().user.photoURL,response.body().user.address,company,department,response.body().user.jobNo,context);
+                        CurrentUser.getInstance(context).saveLoginInfo(username, response.headers().get("sessionID"), response.body().user.id, response.body().user.authority, response.body().user.sex, response.body().user.driverType, response.body().user.identify, response.body().user.phone, response.body().user.photoURL, response.body().user.address, company, department, response.body().user.jobNo, context);
                         getCompany(response.body().user.companyID);
                         getApartment(response.body().user.appartmentID);
                         Toast.makeText(Login.this, "登录成功！", Toast.LENGTH_SHORT).show();
@@ -125,6 +134,7 @@ public class Login extends AppCompatActivity {
         });
 
     }
+
     private void getCompany(int companyID) {
 
         OkHttpClient client = new OkHttpClient.Builder()
@@ -132,7 +142,7 @@ public class Login extends AppCompatActivity {
                 .writeTimeout(4, TimeUnit.SECONDS)
                 .readTimeout(4, TimeUnit.SECONDS)
                 .build();
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(IP).addConverterFactory(GsonConverterFactory.create()).client(client).build();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(CurrentUser.IP).addConverterFactory(GsonConverterFactory.create()).client(client).build();
         RetrofitInterface service = retrofit.create(RetrofitInterface.class);
         Call<UnitRetro> call = service.getUnit(companyID);
         call.enqueue(new Callback<UnitRetro>() {
@@ -144,8 +154,8 @@ public class Login extends AppCompatActivity {
                 else {
 
                     if (response.body().status == 1) {
-                       company = response.body().unit.name;
-                       //
+                        company = response.body().unit.name;
+                        //
                         CurrentUser.getInstance(context).setCompany(company);
 
                     } else {
@@ -174,7 +184,7 @@ public class Login extends AppCompatActivity {
                 .readTimeout(4, TimeUnit.SECONDS)
                 .build();
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(IP).addConverterFactory(GsonConverterFactory.create()).client(client).build();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(CurrentUser.IP).addConverterFactory(GsonConverterFactory.create()).client(client).build();
         RetrofitInterface service = retrofit.create(RetrofitInterface.class);
         Call<DepartmentRetro> call = service.getDepartment(apartmentID);
         call.enqueue(new Callback<DepartmentRetro>() {

@@ -48,7 +48,10 @@
         android:layout_height="1dp"
         android:background="#000000" />
 
-    <com.baidu.mapapi.map.MapView
+
+    <!-- Guobao 07.02 修改 把mapView的类型换成TextureMapView-->
+    <com.baidu.mapapi.map.TextureMapView
+
         android:id="@+id/bmapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
