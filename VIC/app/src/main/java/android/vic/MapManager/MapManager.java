@@ -1,37 +1,13 @@
 package android.vic.MapManager;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.SparseArray;
-import android.vic.R;
 
-import com.alibaba.fastjson.JSON;
 import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptor;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.MapStatus;
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
-
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 
 public class MapManager {
-    int mapUpdatePeriod;
-    private BaiduMap baiduMap;
+    private int mapUpdatePeriod;
     private MapSDK mapSDK;
     private MapUpdaterThread mapUpdaterThread;
     private Handler handler;
@@ -42,10 +18,9 @@ public class MapManager {
     private Callback onDataLoad;        // 地图加载完成时
 
     public MapManager(BaiduMap baiduMap, Handler handler) {
-        this.baiduMap = baiduMap;
         this.mapSDK = new MapSDK(baiduMap);
         this.handler = handler;
-        this.mapUpdaterThread = new MapUpdaterThread(baiduMap, mapSDK);
+        this.mapUpdaterThread = new MapUpdaterThread(mapSDK);
         this.mapUpdatePeriod = 3000;
     }
 
@@ -62,50 +37,22 @@ public class MapManager {
     }
 
     public void getMapCenterCity(final Callback callback) {
-        MapStatus mapStatus = baiduMap.getMapStatus();
-        final LatLng center = new LatLng(mapStatus.target.latitude, mapStatus.target.longitude);
+        final LatLng center = mapSDK.getMapCenter();
         new Thread(new Runnable() {
             @Override
             public void run() {
-                OkHttpClient client = new OkHttpClient();
-                Request request = new Request.Builder().get()
-                        .url(String.format("http://api.map.baidu.com/geocoder/v2/?output=json&ak=kfGrUVqzN6Ohcx90Gdk246n8tAuVSnCs&location=%f,%f", center.latitude, center.longitude))
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    String response_json = response.body().string();
-                    Object document = Configuration.defaultConfiguration().jsonProvider().parse(response_json);
-
-                    String country = JsonPath.read(document, "$.result.addressComponent.country");
-                    String province = JsonPath.read(document, "$.result.addressComponent.province");
-                    String city = JsonPath.read(document, "$.result.addressComponent.city");
-                    String district = JsonPath.read(document, "$.result.addressComponent.district");
-                    String street = JsonPath.read(document, "$.result.addressComponent.street");
-
-
-                    final Bundle bundle = new Bundle();
-                    bundle.putString("country", country);
-                    bundle.putString("province", province);
-                    bundle.putString("city", city);
-                    bundle.putString("district", district);
-                    bundle.putString("street", street);
-
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.handleMessage(bundle);
-                        }
-                    });
-                } catch (IOException e) {
-                    final Bundle bundle = new Bundle();
-                    bundle.putBoolean("status", false);
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.handleMessage(bundle);
-                        }
-                    });
-                }
+                new GeoDecodeServiceDelegate().decode(center, new GeoDecodeServiceDelegate.Callback() {
+                    @Override
+                    public void handleMessage(Bundle bundle) {
+                        final Bundle mBundle = bundle;
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.handleMessage(mBundle);
+                            }
+                        });
+                    }
+                });
             }
         }).start();
     }
