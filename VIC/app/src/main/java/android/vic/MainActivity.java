@@ -5,14 +5,13 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.vic.MapManager.MapManager;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -40,6 +39,8 @@ public class MainActivity extends AppCompatActivity
     private ImageButton  imageButton_nav_icon = null;
     private Button       button_nav_userName  = null;
     private MapView      mapView              = null;
+
+    private Handler      handler              = new Handler();
 
 
     @Override
@@ -94,35 +95,50 @@ public class MainActivity extends AppCompatActivity
 
         // ------
         // Author: 杨梓阳
-        MapView mapView = (MapView) findViewById(R.id.bmapView);
-        final MapUpdaterThread mapUpdaterThread = new MapUpdaterThread(mapView.getMap());
-        MapUpdaterThread.Callback onCarClick = new MapUpdaterThread.Callback() {
+        mapView = (MapView) findViewById(R.id.bmapView);
+        final MapManager mapManager = new MapManager(mapView.getMap(), handler);
+        mapManager.setOnCarClick(new MapManager.Callback() {
             @Override
             public void handleMessage(Bundle bundle) {
                 Intent intent = new Intent(MainActivity.this, CarDetailActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
-        };
+        });
         // 无法连接到后台时回调，执行回调后线程MapUpdaterThread将sleep 10秒
-        MapUpdaterThread.Callback onNetworkError = new MapUpdaterThread.Callback() {
+        mapManager.setOnNetworkError(new MapManager.Callback() {
             @Override
             public void handleMessage(Bundle bundle) {
-                Toast.makeText(MainActivity.this, "", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "无法连接到后台", Toast.LENGTH_LONG).show();
             }
-        };
+        });
         // 后台返回的数据格式不正确时回调，执行回调后线程MapUpdaterThread将终止
-        MapUpdaterThread.Callback onParseError = new MapUpdaterThread.Callback() {
+        mapManager.setOnParseError(new MapManager.Callback() {
             @Override
             public void handleMessage(Bundle bundle) {
-                Toast.makeText(MainActivity.this, "", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "后台返回的数据格式不正确", Toast.LENGTH_LONG).show();
             }
-        };
+        });
+        mapManager.setOnDataFirstLoad(new MapManager.Callback() {
+            @Override
+            public void handleMessage(Bundle bundle) {
+                mapManager.getMapCenterCity(new MapManager.Callback() {
+                    @Override
+                    public void handleMessage(Bundle bundle) {
+                        textView_City.setText(bundle.getString("city"));
+                        // 还可以获得以下这些信息
+//                        Toast.makeText(MainActivity.this, bundle.getString("country"), Toast.LENGTH_LONG).show();
+//                        Toast.makeText(MainActivity.this, bundle.getString("province"), Toast.LENGTH_LONG).show();
+//                        Toast.makeText(MainActivity.this, bundle.getString("city"), Toast.LENGTH_LONG).show();
+//                        Toast.makeText(MainActivity.this, bundle.getString("district"), Toast.LENGTH_LONG).show();
+//                        Toast.makeText(MainActivity.this, bundle.getString("street"), Toast.LENGTH_LONG).show();
 
-        mapUpdaterThread.setOnCarClick(onCarClick);
-        mapUpdaterThread.setOnNetworkError(onNetworkError);
-        mapUpdaterThread.setOnParseError(onParseError);
-        mapUpdaterThread.start();
+                    }
+                });
+            }
+        });
+        mapManager.setMapCenterCity(MapManager.City.Guangzhou);
+        mapManager.startMapUpdater();
         // ------
     }
 
@@ -152,7 +168,6 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
     }
-
 
     @Override
     public void onBackPressed() {

@@ -22,17 +22,18 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    // --------------------------
-    // BaiduMap & BaiduMapUpdaterThread dependencies
-    // Author: 杨梓阳
+
     compile files('libs/BaiduLBS_Android.jar')
-    // --------------------------
 
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
@@ -47,5 +48,6 @@ dependencies {
     compile 'com.tbruyelle.rxpermissions:rxpermissions:0.9.4@aar'
     compile 'com.alibaba:fastjson:1.2.33'
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    compile 'com.jayway.jsonpath:json-path:2.3.0'
     testCompile 'junit:junit:4.12'
 }
