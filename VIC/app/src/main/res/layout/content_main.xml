@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -47,11 +48,13 @@
         android:layout_height="1dp"
         android:background="#000000" />
 
-    <!--TODO yzy看这里，用你的地图代替这个View-->
-    <View
+    <!-- Guobao 07.02 修改 把mapView的类型换成TextureMapView-->
+    <com.baidu.mapapi.map.TextureMapView
+        android:id="@+id/bmapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="10dp"
-        android:background="#b5b5b5" />
+        android:background="#b5b5b5"
+        android:clickable="true" />
 
 </LinearLayout>
