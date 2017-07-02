@@ -1,18 +1,25 @@
 package android.vic;
 
 import android.Manifest;
+
 import android.app.Dialog;
+
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+
+
+import android.vic.MapManager.MapManager;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +38,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -39,8 +47,10 @@ import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
     private TextView     textView_City = null;
     private DrawerLayout drawerLayout  = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +78,14 @@ public class MainActivity extends AppCompatActivity
         ImageButton imageButton_nav_icon = (ImageButton) headerLayout.findViewById(R.id.nav_bar_icon);
         Button button_nav_userName = (Button) headerLayout.findViewById(R.id.nav_bar_username);
 
+
         // 事件绑定
         View.OnClickListener toUserInfo = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ShowUserInfo.class);
                 startActivity(intent);
+
             }
         };
         imageButton_nav_icon.setOnClickListener(toUserInfo);
@@ -93,39 +105,54 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
         // ------
         // Author: 杨梓阳
         // Guobao 07.02 修改 把mapView的类型换成TextureMapView
         TextureMapView mapView = (TextureMapView) findViewById(R.id.bmapView);
-        final MapUpdaterThread mapUpdaterThread = new MapUpdaterThread(mapView.getMap());
-        MapUpdaterThread.Callback onCarClick = new MapUpdaterThread.Callback() {
+        final MapManager mapManager = new MapManager(mapView.getMap(), new Handler());
+        mapManager.setOnCarClick(new MapManager.Callback() {
             @Override
             public void handleMessage(Bundle bundle) {
                 Intent intent = new Intent(MainActivity.this, CarDetailActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
-        };
-        // 无法连接到后台时回调，执行回调后线程MapUpdaterThread将sleep 10秒
-        MapUpdaterThread.Callback onNetworkError = new MapUpdaterThread.Callback() {
-            @Override
-            public void handleMessage(Bundle bundle) {
-                Toast.makeText(MainActivity.this, "", Toast.LENGTH_LONG).show();
-            }
-        };
-        // 后台返回的数据格式不正确时回调，执行回调后线程MapUpdaterThread将终止
-        MapUpdaterThread.Callback onParseError = new MapUpdaterThread.Callback() {
-            @Override
-            public void handleMessage(Bundle bundle) {
-                Toast.makeText(MainActivity.this, "", Toast.LENGTH_LONG).show();
-            }
-        };
 
-        mapUpdaterThread.setOnCarClick(onCarClick);
-        mapUpdaterThread.setOnNetworkError(onNetworkError);
-        mapUpdaterThread.setOnParseError(onParseError);
-        mapUpdaterThread.start();
+        });
+        // 无法连接到后台时回调，执行回调后线程MapUpdaterThread将sleep 10秒
+        mapManager.setOnNetworkError(new MapManager.Callback() {
+            @Override
+            public void handleMessage(Bundle bundle) {
+                Toast.makeText(MainActivity.this, "无法连接到后台", Toast.LENGTH_LONG).show();
+            }
+        });
+        // 后台返回的数据格式不正确时回调，执行回调后线程MapUpdaterThread将终止
+        mapManager.setOnParseError(new MapManager.Callback() {
+            @Override
+            public void handleMessage(Bundle bundle) {
+                Toast.makeText(MainActivity.this, "后台返回的数据格式不正确", Toast.LENGTH_LONG).show();
+            }
+        });
+        mapManager.setOnDataFirstLoad(new MapManager.Callback() {
+            @Override
+            public void handleMessage(Bundle bundle) {
+                mapManager.getMapCenterCity(new MapManager.Callback() {
+                    @Override
+                    public void handleMessage(Bundle bundle) {
+                        textView_City.setText(bundle.getString("city"));
+                        // 还可以获得以下这些信息
+//                        Toast.makeText(MainActivity.this, bundle.getString("country"), Toast.LENGTH_LONG).show();
+//                        Toast.makeText(MainActivity.this, bundle.getString("province"), Toast.LENGTH_LONG).show();
+//                        Toast.makeText(MainActivity.this, bundle.getString("city"), Toast.LENGTH_LONG).show();
+//                        Toast.makeText(MainActivity.this, bundle.getString("district"), Toast.LENGTH_LONG).show();
+//                        Toast.makeText(MainActivity.this, bundle.getString("street"), Toast.LENGTH_LONG).show();
+
+                    }
+                });
+            }
+        });
+        mapManager.setMapCenterCity(MapManager.City.Guangzhou);
+        mapManager.startMapUpdater();
         // ------
     }
 
@@ -181,13 +208,16 @@ public class MainActivity extends AppCompatActivity
             System.exit(0);
         } else {
             timestamp = System.currentTimeMillis();
+
         }
     }
 
     // 菜单各项的操作
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
+
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -208,6 +238,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+
     private Dialog dialog = null;
     private class Logout extends AsyncTask<Void, Void, Boolean> {
 
@@ -217,6 +248,7 @@ public class MainActivity extends AppCompatActivity
             builder.setView(R.layout.logouting_dialog);
             dialog = builder.create();
             dialog.show();
+
         }
 
         @Override
@@ -225,6 +257,7 @@ public class MainActivity extends AppCompatActivity
             try {
                 URL url = new URL("http://" + CurrentUser.IP + "logout");
                 connection = (HttpURLConnection)url.openConnection();
+
                 connection.setConnectTimeout(4000);
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("Cookie", CurrentUser.getInstance(getApplicationContext()).getSessionID());
@@ -247,10 +280,12 @@ public class MainActivity extends AppCompatActivity
                 Log.e("Main", "Logout URL is useless");
                 e.printStackTrace();
             } catch (IOException e) {
+
                 Log.e("Main", "Logout IO is false");
                 e.printStackTrace();
             } catch (JSONException e) {
                 Log.e("Main", "Response is not a json");
+
                 e.printStackTrace();
             } finally {
                 if (connection != null)
