@@ -45,6 +45,11 @@ import java.net.URL;
 
 import rx.functions.Action1;
 
+/**
+ * 主页面
+ * Create by Guobao and Yzy
+ */
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -100,8 +105,9 @@ public class MainActivity extends AppCompatActivity
 
         message_icon.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                // TODO 跳转消息列表页面
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ContextList.class);
+                startActivity(intent);
             }
         });
 
@@ -229,6 +235,7 @@ public class MainActivity extends AppCompatActivity
             // TODO 跳转到订单列表页面
         } else if (id == R.id.nav_exit) {
             // 登出
+            unregisterReceiver(BrocastRec.brocastRec);
             Logout logoutTask = new Logout();
             logoutTask.execute();
         }

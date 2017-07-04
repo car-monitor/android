@@ -27,22 +27,27 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter></activity>
+        </activity>
         <activity
             android:name=".Login"
             android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
         <activity
             android:name=".ShowUserInfo"
             android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".CarDetailActivity"></activity>
+        <activity android:name=".ContextList"/>
+        <activity android:name=".ContextActivity"/>
+        <activity android:name=".CarDetailActivity" />
     </application>
 
 </manifest>

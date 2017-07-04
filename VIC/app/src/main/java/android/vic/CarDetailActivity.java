@@ -17,7 +17,9 @@ public class CarDetailActivity extends AppCompatActivity {
         int driver_id = bundle.getInt("driver_id");
         int order_id = bundle.getInt("order_id");
         Toast.makeText(CarDetailActivity.this,
-                String.format("car_id:%d\ndriver_id:%d\norder_id:%d", car_id, driver_id, order_id),
+                String.format("car_id:%d\n" +
+                        "driver_id:%d\n" +
+                        "order_id:%d", car_id, driver_id, order_id),
                 Toast.LENGTH_LONG).show();
         setContentView(R.layout.activity_new);
     }
