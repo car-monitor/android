@@ -12,7 +12,7 @@ import android.util.ArrayMap;
 class CurrentUser {
 
     // IP地址，理论上这个东西最后应该要被删除的
-    static String IP = "http://192.168.19.1:8888/";
+    static String IP = "http://192.168.189.1:8888/";
 
     // 获取单例，需要给Context，直接调用getApplicationContext()
     static CurrentUser getInstance(Context context) {
