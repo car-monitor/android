@@ -3,6 +3,7 @@ package android.vic.MapManager;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,9 +18,9 @@ class RouteDBDelegateStub implements RouteDBDelegate {
         List<LatLng> pathList1 = new LinkedList<>();
         List<LatLng> pathList2 = new LinkedList<>();
         List<LatLng> pathList3 = new LinkedList<>();
-        List<Timestamp> timestampList1 = new LinkedList<>();
-        List<Timestamp> timestampList2 = new LinkedList<>();
-        List<Timestamp> timestampList3 = new LinkedList<>();
+        List<Date> timestampList1 = new LinkedList<>();
+        List<Date> timestampList2 = new LinkedList<>();
+        List<Date> timestampList3 = new LinkedList<>();
         List<RouteSectionInfo> sectionList1 = new LinkedList<>();
         List<RouteSectionInfo> sectionList2 = new LinkedList<>();
 
@@ -27,10 +28,10 @@ class RouteDBDelegateStub implements RouteDBDelegate {
         pathList1.add(new LatLng(23.116293, 113.192923));
         pathList2.add(new LatLng(23.118641, 113.192892));
         pathList2.add(new LatLng(23.118553, 113.19437));
-        timestampList1.add(new Timestamp(System.currentTimeMillis() - 5 * 60 * 1000));
-        timestampList1.add(new Timestamp(System.currentTimeMillis() - 4 * 60 * 1000));
-        timestampList1.add(new Timestamp(System.currentTimeMillis() - 3 * 60 * 1000));
-        timestampList1.add(new Timestamp(System.currentTimeMillis() - 2 * 60 * 1000));
+        timestampList1.add(new Date(System.currentTimeMillis() - 5 * 60 * 1000));
+        timestampList1.add(new Date(System.currentTimeMillis() - 4 * 60 * 1000));
+        timestampList1.add(new Date(System.currentTimeMillis() - 3 * 60 * 1000));
+        timestampList1.add(new Date(System.currentTimeMillis() - 2 * 60 * 1000));
 
         for (int t = 0; t < timer; t++) {
             pathList2.add(new LatLng(23.118553, 113.19437 + timer * 0.001));
@@ -48,8 +49,8 @@ class RouteDBDelegateStub implements RouteDBDelegate {
 
         pathList3.add(new LatLng(23.146831, 113.321781));
         pathList3.add(new LatLng(23.146873, 113.323771));
-        timestampList3.add(new Timestamp(System.currentTimeMillis() - 3 * 60 * 1000));
-        timestampList3.add(new Timestamp(System.currentTimeMillis() - 2 * 60 * 1000));
+        timestampList3.add(new Date(System.currentTimeMillis() - 3 * 60 * 1000));
+        timestampList3.add(new Date(System.currentTimeMillis() - 2 * 60 * 1000));
         for (int t = 0; t < timer; t++) {
             pathList3.add(new LatLng(23.146873, 113.323771 + timer * 0.001));
             timestampList3.add(new Timestamp(System.currentTimeMillis() - 2 * 60 * 1000 + timer * 1000));
