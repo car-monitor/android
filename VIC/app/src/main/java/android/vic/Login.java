@@ -125,7 +125,7 @@ public class Login extends AppCompatActivity {
                     if (response.body().status == 1) {
                         animationDrawable.stop();
                         imgView.setVisibility(View.INVISIBLE);
-                        CurrentUser.getInstance(context).saveLoginInfo(username, response.headers().get("sessionID"), response.body().user.id, response.body().user.authority, response.body().user.sex, response.body().user.driverType, response.body().user.identify, response.body().user.phone, response.body().user.photoURL, response.body().user.address, company, department, response.body().user.jobNo, context);
+                        CurrentUser.getInstance(context).saveLoginInfo(username, response.headers().get("cookie"), response.body().user.id, response.body().user.authority, response.body().user.sex, response.body().user.driverType, response.body().user.identify, response.body().user.phone, response.body().user.photoURL, response.body().user.address, company, department, response.body().user.jobNo, context);
                         getCompany(response.body().user.companyID);
                         getApartment(response.body().user.appartmentID);
                         Toast.makeText(Login.this, "登录成功！", Toast.LENGTH_SHORT).show();

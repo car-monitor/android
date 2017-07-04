@@ -74,10 +74,11 @@ public class MainActivity extends AppCompatActivity
 
         // 上面是模板自带的
         // 获取元素
-        textView_City        = (TextView    )findViewById(R.id.city);
-        drawerLayout         = (DrawerLayout)findViewById(R.id.drawer_layout);
-        ImageButton imageButton_icon = (ImageButton) findViewById(R.id.main_user);
-        ImageButton message_icon = (ImageButton) findViewById(R.id.message);
+        textView_City                 = (TextView)    findViewById(R.id.city);
+        drawerLayout                  = (DrawerLayout)findViewById(R.id.drawer_layout);
+        ImageButton imageButton_icon  = (ImageButton) findViewById(R.id.main_user);
+        ImageButton message_icon      = (ImageButton) findViewById(R.id.message);
+        TextView    textView_nav_name = (TextView)    findViewById(R.id.nav_bar_username);
 
         View headerLayout = navigationView.getHeaderView(0);
         ImageButton imageButton_nav_icon = (ImageButton) headerLayout.findViewById(R.id.nav_bar_icon);
@@ -110,6 +111,9 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+
+        if (CurrentUser.getInstance(this).isLogan())
+            textView_nav_name.setText(CurrentUser.getInstance(this).getUsername());
 
         // ------
         // Author: 杨梓阳
@@ -262,7 +266,7 @@ public class MainActivity extends AppCompatActivity
         protected Boolean doInBackground(Void... params) {
             HttpURLConnection connection = null;
             try {
-                URL url = new URL("http://" + CurrentUser.IP + "logout");
+                URL url = new URL(CurrentUser.IP + "logout");
                 connection = (HttpURLConnection)url.openConnection();
 
                 connection.setConnectTimeout(4000);

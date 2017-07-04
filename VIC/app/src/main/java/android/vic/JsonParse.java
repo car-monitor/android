@@ -42,7 +42,7 @@ public class JsonParse {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] data = new byte[50000];
         int len;
-        URL url = new URL("http://" + CurrentUser.IP + "getmessage");
+        URL url = new URL(CurrentUser.IP + "getmessage");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setRequestProperty("cookie", currentUser.getSessionID());

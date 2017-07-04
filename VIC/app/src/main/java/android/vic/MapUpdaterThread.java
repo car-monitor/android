@@ -367,7 +367,6 @@ class RouteDBDelegateStub implements RouteDBDelegate {
 }
 
 class RouteDBDelegateImpl implements RouteDBDelegate {
-    static private final String hostname = "localhost";
     static private final String GET_ALL_ORDERS = "getorders";
     private final OkHttpClient client = new OkHttpClient();
 
@@ -420,7 +419,7 @@ class RouteDBDelegateImpl implements RouteDBDelegate {
 
     private Response getDataFromServer() throws IOException {
         Request request = new Request.Builder().get()
-                .url(String.format("http://%s/%s", hostname, GET_ALL_ORDERS))
+                .url(CurrentUser.IP + GET_ALL_ORDERS)
                 .build();
         return client.newCall(request).execute();
     }
