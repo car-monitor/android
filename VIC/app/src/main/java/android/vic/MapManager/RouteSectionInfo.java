@@ -1,6 +1,6 @@
 package android.vic.MapManager;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -11,14 +11,14 @@ class RouteSectionInfo {
     private int driver_id;
     private int car_id;
     private List<LatLng> path;
-    private List<Timestamp> timestampList;  // optional
+    private List<Date> timestampList;  // optional
 
     RouteSectionInfo(int section_id, List<LatLng> path) {
         this.section_id = section_id;
         this.path = path;
     }
 
-    RouteSectionInfo(int section_id, List<LatLng> path, List<Timestamp> timestampList) {
+    RouteSectionInfo(int section_id, List<LatLng> path, List<Date> timestampList) {
         this(section_id, path);
         this.timestampList = timestampList;
     }
@@ -47,11 +47,11 @@ class RouteSectionInfo {
         this.path = path;
     }
 
-    public List<Timestamp> getTimestampList() {
+    public List<Date> getTimestampList() {
         return timestampList;
     }
 
-    public void setTimestampList(List<Timestamp> timestampList) {
+    public void setTimestampList(List<Date> timestampList) {
         this.timestampList = timestampList;
     }
 }
