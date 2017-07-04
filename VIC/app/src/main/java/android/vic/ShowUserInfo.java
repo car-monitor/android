@@ -25,6 +25,7 @@ public class ShowUserInfo extends AppCompatActivity {
         setContentView(R.layout.userinfo);
         context = ShowUserInfo.this;
         initView();
+        if (CurrentUser.getInstance(this).isLogan()) setInfo();
         addListenner();
     }
     private void initView() {

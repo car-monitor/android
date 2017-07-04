@@ -1,3 +1,5 @@
+// JS是单线程，一次只能处理一个请求，如果中间有别的请求，返回值会出现问题
+
 function getIPAdress(){
     var interfaces = require('os').networkInterfaces();
 
@@ -22,15 +24,19 @@ const hostname = getIPAdress();
 const port = 8888;
 
 const server = http.createServer((req, res) => {
-    console.log(req.method)
-    console.log(req.url)
+    console.log("--------------------------------------------");
+    console.log("method: " + req.method);
+    console.log("url: " + req.url);
 
+    // 判断请求方法和URL
     if (req.method == "POST" && req.url == "/login") {
+        // 读取数据
         postData = '';
         req.on('data', function(data) {
             postData += data;
         });
 
+        // 读取完成后的回调
         req.on('end', function() {
             console.log(querystring.parse(postData));
             res.statusCode = 200;
@@ -48,9 +54,9 @@ const server = http.createServer((req, res) => {
         if (req.url.split("?")[0] == "/getunit")
             res.end("{\"status\":1,\"unit\": {\"id\": 2, \"name\": \"UNIT NAME\"}}");
         else
-            res.end("{\"status\":1,\"department\": {\"id\": 2, \"unitid\": 2, \"name\": \"UNIT NAME\"}}");
+            res.end("{\"status\":1,\"department\": {\"id\": 78, \"unitid\": 2, \"name\": \"UNIT NAME\"}}");
     }
-
+    console.log("--------------------------------------------");
 });
 
 server.listen(port, hostname, () => {
