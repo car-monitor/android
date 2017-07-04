@@ -16,7 +16,6 @@ import java.util.List;
 // 顶层模块，调用各模块实现地图更新
 class MapUpdaterThread extends Thread {
     private int period;
-    private BaiduMap baiduMap;
     private MapSDK mapSDK;
     private Callback onCarClick = null;
     private Callback onNetworkError = null;    // 无法连接到后台时回调
@@ -24,8 +23,7 @@ class MapUpdaterThread extends Thread {
     private Callback onDataFirstLoad = null;    // 地图第一次加载完成时
     private Callback onDataLoad = null;        // 地图加载完成时
 
-    MapUpdaterThread(BaiduMap baiduMap, MapSDK mapSDK) {
-        this.baiduMap = baiduMap;
+    MapUpdaterThread(MapSDK mapSDK) {
         this.mapSDK = mapSDK;
         period = 3000;
     }

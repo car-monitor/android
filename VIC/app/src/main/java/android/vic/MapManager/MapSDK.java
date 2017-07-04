@@ -125,4 +125,9 @@ class MapSDK {
     interface Callback {
         void handleMessage(Bundle bundle);
     }
+
+    LatLng getMapCenter() {
+        MapStatus mapStatus = baiduMap.getMapStatus();
+        return new LatLng(mapStatus.target.latitude, mapStatus.target.longitude);
+    }
 }
