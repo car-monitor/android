@@ -54,13 +54,14 @@ public class Login extends AppCompatActivity {
         context = Login.this;
         company = "default";
         department = "default";
-
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
         // Guobao
         // 先校验是否已经登录
         if (CurrentUser.getInstance(context).isLogan()) {
             messagePart();
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(this, MainActivity.class);
+//            startActivity(intent);
         } else {
             initView();
             addListener();
@@ -70,13 +71,12 @@ public class Login extends AppCompatActivity {
     // Guobao
     // 双击退出
     private long timestamp = 0;
-
     @Override
     public void onBackPressed() {
         if (timestamp == 0) {
             Toast.makeText(Login.this, "再次点击返回键可退出", Toast.LENGTH_SHORT).show();
             timestamp = System.currentTimeMillis();
-        } else if (System.currentTimeMillis() - timestamp <= Toast.LENGTH_SHORT) {
+        } else if (System.currentTimeMillis() - timestamp <= 2000) {
             System.exit(0);
         } else {
             timestamp = System.currentTimeMillis();

@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity
         if (timestamp == 0) {
             Toast.makeText(MainActivity.this, "再次点击返回键可退出", Toast.LENGTH_SHORT).show();
             timestamp = System.currentTimeMillis();
-        } else if (System.currentTimeMillis() - timestamp <= Toast.LENGTH_SHORT) {
+        } else if (System.currentTimeMillis() - timestamp <= 2000) {
             System.exit(0);
         } else {
             timestamp = System.currentTimeMillis();
