@@ -54,14 +54,13 @@ public class Login extends AppCompatActivity {
         context = Login.this;
         company = "default";
         department = "default";
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+
         // Guobao
         // 先校验是否已经登录
         if (CurrentUser.getInstance(context).isLogan()) {
             messagePart();
-//            Intent intent = new Intent(this, MainActivity.class);
-//            startActivity(intent);
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
         } else {
             initView();
             addListener();
@@ -107,6 +106,17 @@ public class Login extends AppCompatActivity {
     }
 
     public void login(final String username, String password) {
+        // DEBUG
+        CurrentUser.getInstance(context).saveLoginInfo(username, "sessionID", 123, 1, 1, "C1", "idtf", "123123","url","addre","com","apart",312,context);
+        Log.e("LOGIN", CurrentUser.getInstance(context).getUsername());
+        Toast.makeText(Login.this, "登录成功！", Toast.LENGTH_SHORT).show();
+        // Guobao
+        // 登录成功，调用消息功能
+        messagePart();
+        Intent intent = new Intent(Login.this, MainActivity.class);
+        startActivity(intent);
+        if (1==1) return;
+
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(4, TimeUnit.SECONDS)
                 .writeTimeout(4, TimeUnit.SECONDS)
@@ -319,6 +329,8 @@ public class Login extends AppCompatActivity {
                     // Guobao 修改
                     // 这里我把brocastRec的对象改到了BrocastRec里，做成了一个静态变量
                     // 在这个地方会被注册，在主页面的登出那里可以注销
+                    // DEBUG
+                    Log.e("MESSAGE", "SEND");
                     if (BrocastRec.brocastRec == null)
                         BrocastRec.brocastRec = new BrocastRec();
                     registerReceiver(BrocastRec.brocastRec, dynamic_filter);
@@ -338,16 +350,18 @@ public class Login extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     //写入数据
-                    if (s.size() != 0) {
-                        inData(s.get(0));
-                        inData(s.get(1));
-                        Message message = new Message();
-                        message.what = UPDATE_CONTENT;
-                        message.obj = s;
-                        handler.sendMessage(message);
-                    }
+                    // DEBUG
+                    Log.e("MESSAGE", Integer.toString(s.size()));
+//                    if (s.size() != 0) {
+//                        inData(s.get(0));
+//                        inData(s.get(1));
+//                        Message message = new Message();
+//                        message.what = UPDATE_CONTENT;
+//                        message.obj = s;
+//                        handler.sendMessage(message);
+//                    }
                     //每隔0.5秒请求一次
-                    handler.postDelayed(this, 500);
+                    handler.postDelayed(this, 5000);
                 }
             }).start();
         } else {

@@ -78,12 +78,13 @@ public class MainActivity extends AppCompatActivity
         drawerLayout                  = (DrawerLayout)findViewById(R.id.drawer_layout);
         ImageButton imageButton_icon  = (ImageButton) findViewById(R.id.main_user);
         ImageButton message_icon      = (ImageButton) findViewById(R.id.message);
-        TextView    textView_nav_name = (TextView)    findViewById(R.id.nav_bar_username);
 
         View headerLayout = navigationView.getHeaderView(0);
         ImageButton imageButton_nav_icon = (ImageButton) headerLayout.findViewById(R.id.nav_bar_icon);
         Button button_nav_userName = (Button) headerLayout.findViewById(R.id.nav_bar_username);
 
+        if (CurrentUser.getInstance(this).isLogan())
+            button_nav_userName.setText(CurrentUser.getInstance(this).getUsername());
 
         // 事件绑定
         View.OnClickListener toUserInfo = new View.OnClickListener() {
@@ -111,9 +112,6 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-
-        if (CurrentUser.getInstance(this).isLogan())
-            textView_nav_name.setText(CurrentUser.getInstance(this).getUsername());
 
         // ------
         // Author: 杨梓阳
@@ -259,7 +257,6 @@ public class MainActivity extends AppCompatActivity
             builder.setView(R.layout.logouting_dialog);
             dialog = builder.create();
             dialog.show();
-
         }
 
         @Override

@@ -22,6 +22,7 @@ querystring = require('querystring');
 
 const hostname = getIPAdress();
 const port = 8888;
+i = 1;
 
 const server = http.createServer((req, res) => {
     console.log("--------------------------------------------");
@@ -46,15 +47,20 @@ const server = http.createServer((req, res) => {
     }
 
     else if (req.method == "GET") {
+        i += 1;
+        console.log("i: " + i);
         res.statusCode = 200;
         var params = url.parse(req.url, true).query;
         console.log(params);
         res.statusCode = 200;
 
-        if (req.url.split("?")[0] == "/getunit")
-            res.end("{\"status\":1,\"unit\": {\"id\": 2, \"name\": \"UNIT NAME\"}}");
-        else
-            res.end("{\"status\":1,\"department\": {\"id\": 78, \"unitid\": 2, \"name\": \"UNIT NAME\"}}");
+        if (req.url.split("?")[0] == '/getmessage')
+            res.end('{\"status\": 0, \"infos\": [{\"type\": 0, \"sender\": {\"id\":' + i + ', \"username\": \"name\",  \"authority\":2,\"sex\":0,\"driverType\": \"C1\", \"identify\": \"idetty\", \"phone\": \"10086\", \"photoURL\": \"urls\", \"address\": \"addrs\", \"companyID\": \"con\", \"appartmentID\": \"apart\", \"jobNo\": 12123}, \"title\": \"title\", \"content\": \"contents();\"}]}')
+
+        // if (req.url.split("?")[0] == "/getunit")
+        //    res.end("{\"status\":1,\"unit\": {\"id\": 2, \"name\": \"UNIT NAME\"}}");
+        // else
+        //    res.end("{\"status\":1,\"department\": {\"id\": 78, \"unitid\": 2, \"name\": \"UNIT NAME\"}}");
     }
     console.log("--------------------------------------------");
 });

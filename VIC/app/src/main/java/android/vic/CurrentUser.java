@@ -12,7 +12,7 @@ import android.util.ArrayMap;
 class CurrentUser {
 
     // IP地址，理论上这个东西最后应该要被删除的
-    static String IP = "http://192.168.189.1:8888/";
+    static String IP = "http://192.168.19.1:8888/";
 
     // 获取单例，需要给Context，直接调用getApplicationContext()
     static CurrentUser getInstance(Context context) {
@@ -40,7 +40,7 @@ class CurrentUser {
     public String getAddress()    { return address; }
     public String getCompany()    { return company; }
     public String getApartment()  { return apartment; }
-    public int    getJobNo()      { return jobNo; }
+    public String getJobNo()      { return Integer.toString(jobNo); }
 
     // 设置单个变量，返回值意味着是否登录，未登录不能修改，且返回值会为false
     public boolean setSessionID(String sessionID_)   { return sessionID != null && (sessionID  = sessionID_)  != null; }

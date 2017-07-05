@@ -1,6 +1,7 @@
 package android.vic;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,6 +25,9 @@ public class JsonParse {
         List<Contexts> clists = new ArrayList<>();
         byte[] data = readParse(context);
         JSONObject jsonObject = new JSONObject(new String(data));
+        // DEBUG
+        Log.e("JSONPARSE", jsonObject.toString());
+
         String string = jsonObject.getString("infos");
         JSONArray array = new JSONArray(string);
         for (int i = 0; i < array.length(); i++) {
@@ -56,6 +60,7 @@ public class JsonParse {
             }
         }
         inputStream.close();
+        connection.disconnect();
         return outputStream.toByteArray();
     }
 }
