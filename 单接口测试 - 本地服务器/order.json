@@ -1,0 +1,52 @@
+{"status":1,
+    "orderdetails": [
+    {
+    "order":{ "id": 1,
+        "carID": 1,
+    "driverId": 1,
+    "coordinateType": "GCJ-05",
+    "locationType": "GPS",
+    "startLongitude": 113.26608,
+    "startLatitude": 23.13667,
+    "endLongitude": 113.38953,
+    "endLatitude": 23.06625,
+    "isFinished": 1,
+    "startTime": "2017-06-29 16:10:17",
+    "endTime": "2017-07-15 13:32:17",
+    "addressorName": "张三",
+    "addressorPhone": "13510002323",
+    "addressorAddress": "越秀山体育场",
+    "addresseeName": "李四",
+    "addresseePhone": "15092938452",
+    "addresseeAddress": "中山大学东校区",
+    "sealExpect": "1232321",
+    "sealCurrent": "1232321"
+},
+    "routes": []
+    },
+    {
+    "order":{ "id": 2,
+        "carID": 1,
+    "driverId": 1,
+    "coordinateType": "GCJ-05",
+    "locationType": "GPS",
+    "startLongitude": 113.25776,
+    "startLatitude": 23.14872,
+    "endLongitude": 113.42668,
+    "endLatitude": 23.08622,
+    "isFinished": 1,
+    "startTime": "2017-07-04 05:28:29",
+    "endTime": "2017-07-12 11:51:10",
+    "addressorName": "张三",
+    "addressorPhone": "13510002323",
+    "addressorAddress": "广州火车站",
+    "addresseeName": "李四",
+    "addresseePhone": "15092938452",
+    "addresseeAddress": "黄埔军校",
+    "sealExpect": "1232322",
+    "sealCurrent": "1232322"
+},
+    "routes": []
+    }
+    ]
+}

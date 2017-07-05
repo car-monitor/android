@@ -1,0 +1,13 @@
+{"status": 1,
+    "car": {
+        "id": 1,
+        "carPlate": "粤A-48357",
+        "carType": "长城货车",
+        "buyTime": "2017-07-04",
+        "cargoCapacity": 12,
+        "engineNo": "32321",
+        "owner": "220301195806071933",
+        "passengerNum": 6,
+        "photoURL": ""
+    }
+}

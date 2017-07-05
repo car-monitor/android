@@ -1,0 +1,73 @@
+{"status": 1, "users":
+[
+  {
+    "id": 1,
+    "username": "张晓斌",
+    "authority": 1,
+    "sex": 1,
+    "driverType": "C1",
+    "identify": "220104195804218193",
+    "phone": "18338470298",
+    "photoURL": "",
+    "address": "广东省广州市",
+    "companyID": 0,
+    "appartmentID": 0,
+    "jobNo": "81727823"
+  },
+  {
+    "id": 2,
+    "username": "李宇光",
+    "authority": 1,
+    "sex": 1,
+    "driverType": "C1",
+    "identify": "120301198602291832",
+    "phone": "15183483298",
+    "photoURL": "",
+    "address": "广东省广州市",
+    "companyID": 0,
+    "appartmentID": 0,
+    "jobNo": "81727823"
+  },
+  {
+    "id": 3,
+    "username": "田氏仁",
+    "authority": 1,
+    "sex": 1,
+    "driverType": "C1",
+    "identify": "230104198205033871",
+    "phone": "133384320223",
+    "photoURL": "",
+    "address": "广东省广州市",
+    "companyID": 0,
+    "appartmentID": 0,
+    "jobNo": "81727823"
+  },
+  {
+    "id": 4,
+    "username": "车里梓",
+    "authority": 1,
+    "sex": 1,
+    "driverType": "C1",
+    "identify": "102393199001312831",
+    "phone": "15338570298",
+    "photoURL": "",
+    "address": "广东省广州市",
+    "companyID": 0,
+    "appartmentID": 0,
+    "jobNo": "81727823"
+  },
+  {
+    "id": 5,
+    "username": "时文武",
+    "authority": 1,
+    "sex": 1,
+    "driverType": "C1",
+    "identify": "130104194401218193",
+    "phone": "13938470298",
+    "photoURL": "",
+    "address": "广东省广州市",
+    "companyID": 0,
+    "appartmentID": 0,
+    "jobNo": "81727823"
+  }
+]}

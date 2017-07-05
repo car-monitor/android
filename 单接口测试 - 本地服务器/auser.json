@@ -1,0 +1,16 @@
+{"status": 1, "user":
+  {
+    "id": 1,
+    "username": "张晓斌",
+    "authority": 1,
+    "sex": 1,
+    "driverType": "C1",
+    "identify": "220104195804218193",
+    "phone": "18338470298",
+    "photoURL": "",
+    "address": "广东省广州市",
+    "companyID": 0,
+    "appartmentID": 0,
+    "jobNo": "81727823"
+  }
+}

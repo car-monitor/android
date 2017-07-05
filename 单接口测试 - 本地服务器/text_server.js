@@ -19,6 +19,7 @@ function getIPAdress(){
 http        = require('http');
 url         = require('url');
 querystring = require('querystring');
+rf          = require("fs");
 
 const hostname = getIPAdress();
 const port = 8888;
@@ -54,8 +55,39 @@ const server = http.createServer((req, res) => {
         console.log(params);
         res.statusCode = 200;
 
-        if (req.url.split("?")[0] == '/getmessage')
-            res.end('{\"status\": 0, \"infos\": [{\"type\": 0, \"sender\": {\"id\":' + i + ', \"username\": \"name\",  \"authority\":2,\"sex\":0,\"driverType\": \"C1\", \"identify\": \"idetty\", \"phone\": \"10086\", \"photoURL\": \"urls\", \"address\": \"addrs\", \"companyID\": \"con\", \"appartmentID\": \"apart\", \"jobNo\": 12123}, \"title\": \"title\", \"content\": \"contents();\"}]}')
+        var cardata=rf.readFileSync("car.json","utf-8");
+        var acar = rf.readFileSync("acar.json", "utf-8");
+
+        if (req.url.split("?")[0] == '/getcars')
+            res.end(cardata);
+
+        if (req.url.split("?")[0] == '/getcar') {
+            res.end(acar);
+        }
+
+        if (req.url.split("?")[0] == '/getorders') {
+            res.end(rf.readFileSync("order.json", "utf-8"));
+        }
+
+        if (req.url.split("?")[0] == '/getorder') {
+            res.end(rf.readFileSync("aorder.json", "utf-8"));
+        }
+
+        if (req.url.split("?")[0] == '/getusers') {
+            res.end(rf.readFileSync("driver.json", "utf-8"));
+        }
+
+        if (req.url.split("?")[0] == '/getuser') {
+            res.end(rf.readFileSync("auser.json", "utf-8"));
+        }
+
+
+
+
+
+
+        // if (req.url.split("?")[0] == '/getmessage')
+        //     res.end('{\"status\": 0, \"infos\": [{\"type\": 0, \"sender\": {\"id\":' + i + ', \"username\": \"name\",  \"authority\":2,\"sex\":0,\"driverType\": \"C1\", \"identify\": \"idetty\", \"phone\": \"10086\", \"photoURL\": \"urls\", \"address\": \"addrs\", \"companyID\": \"con\", \"appartmentID\": \"apart\", \"jobNo\": 12123}, \"title\": \"title\", \"content\": \"contents();\"}]}')
 
         // if (req.url.split("?")[0] == "/getunit")
         //    res.end("{\"status\":1,\"unit\": {\"id\": 2, \"name\": \"UNIT NAME\"}}");

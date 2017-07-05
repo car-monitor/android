@@ -39,10 +39,7 @@ public class OrderDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
-        int order_id = bundle.getInt("order_id");
-        Toast.makeText(OrderDetailActivity.this,
-                String.format("order_id:%d\n", order_id),
-                Toast.LENGTH_LONG).show();
+        int order_id = Integer.parseInt(bundle.getString("order_id"));
         setContentView(R.layout.activity_order_detail);
 
         initialView();
@@ -92,14 +89,14 @@ public class OrderDetailActivity extends AppCompatActivity {
                         return null;
                     JSONObject order= obj.getJSONObject("order");
                     ArrayList<String> list= new ArrayList<>();
-                    list.set(INDEX_CAR_ID, order.getString("carID"));
-                    list.set(INDEX_DRIVER_ID, order.getString("driverId"));
-                    list.set(INDEX_ORDER_ID, order.getString("id"));
-                    list.set(INDEX_PLACE_OF_DEPARTURE, order.getString("startSite"));
-                    list.set(INDEX_DESTINATION, "------");
-                    list.set(INDEX_ROUTE_INFO, "------");
-                    list.set(INDEX_KEY_POINT, "------");
-                    list.set(INDEX_ORDER_TIME, "-----");
+                    list.add(INDEX_CAR_ID, order.getString("carID"));
+                    list.add(INDEX_DRIVER_ID, order.getString("driverId"));
+                    list.add(INDEX_ORDER_ID, order.getString("id"));
+                    list.add(INDEX_PLACE_OF_DEPARTURE, "------");
+                    list.add(INDEX_DESTINATION, "------");
+                    list.add(INDEX_ROUTE_INFO, "------");
+                    list.add(INDEX_KEY_POINT, "------");
+                    list.add(INDEX_ORDER_TIME, "-----");
                     return list;
                 }
 

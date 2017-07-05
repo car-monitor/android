@@ -31,10 +31,7 @@ public class DriverDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
-        int driver_id = bundle.getInt("driver_id");
-        Toast.makeText(DriverDetailActivity.this,
-                String.format("driver_id:%d\n", driver_id),
-                Toast.LENGTH_LONG).show();
+        int driver_id = Integer.parseInt(bundle.getString("driver_id"));
         setContentView(R.layout.activity_driver_detail);
 
         initialView();
@@ -80,11 +77,11 @@ public class DriverDetailActivity extends AppCompatActivity {
                         return null;
                     JSONObject user= obj.getJSONObject("user");
                     ArrayList<String> list= new ArrayList<>();
-                    list.set(INDEX_DRIVER_ID, user.getString("id"));
-                    list.set(INDEX_DEPARTMENT_ID, user.getString("companyID"));
-                    list.set(INDEX_UNIT_ID, user.getString("appartmentID"));
-                    list.set(INDEX_ADDRESS, user.getString("address"));
-                    list.set(INDEX_PHONE, user.getString("phone"));
+                    list.add(INDEX_DRIVER_ID, user.getString("id"));
+                    list.add(INDEX_DEPARTMENT_ID, user.getString("companyID"));
+                    list.add(INDEX_UNIT_ID, user.getString("appartmentID"));
+                    list.add(INDEX_ADDRESS, user.getString("address"));
+                    list.add(INDEX_PHONE, user.getString("phone"));
                     return list;
                 }
 

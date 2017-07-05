@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.vic.R;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -130,16 +131,16 @@ public class DetailListActivity extends AppCompatActivity {
                             list.add(item);
                         }
                     } else if (type== TYPE_DRIVER) {
-                        JSONArray drivers= obj.getJSONArray("drivers");
+                        JSONArray drivers= obj.getJSONArray("users");
                         for (int i= 0; i< drivers.length(); i++) {
                             JSONObject driver= drivers.getJSONObject(i);
                             ListItem item= new ListItem(driver.getString("id"), driver.getString("username"), null);
                             list.add(item);
                         }
                     } else if (type== TYPE_ORDER) {
-                        JSONArray orders= obj.getJSONArray("orders");
+                        JSONArray orders= obj.getJSONArray("orderdetails");
                         for (int i= 0; i< orders.length(); i++) {
-                            JSONObject order= orders.getJSONObject(i);
+                            JSONObject order= orders.getJSONObject(i).getJSONObject("order");
                             ListItem item= new ListItem(order.getString("id"), order.getString("carID"), order.getString("driverId"));
                             list.add(item);
                         }

@@ -48,6 +48,9 @@
         <activity android:name=".ContextList"/>
         <activity android:name=".ContextActivity"/>
         <activity android:name=".CarDetailActivity" />
+        <activity android:name=".DriverDetailActivity" />
+        <activity android:name=".OrderDetailActivity" />
+        <activity android:name=".DetailListActivity" />
     </application>
 
 </manifest>

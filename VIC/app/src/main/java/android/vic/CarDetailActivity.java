@@ -1,9 +1,11 @@
 package android.vic;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.util.AsyncListUtil;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,10 +43,7 @@ public class CarDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
-        int car_id = bundle.getInt("car_id");
-        Toast.makeText(CarDetailActivity.this,
-                String.format("car_id:%d\n", car_id),
-                Toast.LENGTH_LONG).show();
+        int car_id = Integer.parseInt(bundle.getString("car_id"));
         setContentView(R.layout.activity_car_detail);
 
         initialView();
@@ -63,10 +62,10 @@ public class CarDetailActivity extends AppCompatActivity {
         passenger_num= (TextView) findViewById(R.id.passenger_num);
     }
 
-    private class GetCarDetail extends AsyncTask<Integer, Void, ArrayList<String>> {
+    private class GetCarDetail extends AsyncTask<Integer, Void, String[]> {
 
         @Override
-        protected ArrayList<String> doInBackground(Integer... integers) {
+        protected String[] doInBackground(Integer... integers) {
 
             HttpURLConnection connection= null;
             try {
@@ -92,14 +91,14 @@ public class CarDetailActivity extends AppCompatActivity {
                     if (obj.getInt("status") == 0)
                         return null;
                     JSONObject car= obj.getJSONObject("car");
-                    ArrayList<String> list= new ArrayList<>();
-                    list.set(INDEX_CARPLATE_NUM, car.getString("carPlate"));
-                    list.set(INDEX_CAR_TYPE, car.getString("carType"));
-                    list.set(INDEX_BUY_TIME, car.getString("buyTime"));
-                    list.set(INDEX_CARGO_CAPACITY, car.getString("cargoCapacity"));
-                    list.set(INDEX_ENGINE_NUM, car.getString("engineNo"));
-                    list.set(INDEX_CAR_OWNER, car.getString("owner"));
-                    list.set(INDEX_PASSENGER_NUM, car.getString("passengerNum"));
+                    String[] list= new String[7];
+                    list[INDEX_CARPLATE_NUM]   = car.getString("carPlate");
+                    list[INDEX_CAR_TYPE]       = car.getString("carType");
+                    list[INDEX_BUY_TIME]       = car.getString("buyTime");
+                    list[INDEX_CARGO_CAPACITY] = car.getString("cargoCapacity");
+                    list[INDEX_ENGINE_NUM]     = car.getString("engineNo");
+                    list[INDEX_CAR_OWNER]      = car.getString("owner");
+                    list[INDEX_PASSENGER_NUM]  = car.getString("passengerNum");
                     return list;
                 }
 
@@ -115,17 +114,17 @@ public class CarDetailActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<String> list) {
+        protected void onPostExecute(String[] list) {
             if (list== null) {
                 Toast.makeText(CarDetailActivity.this, "车辆信息获取失败", Toast.LENGTH_SHORT).show();
             } else {
-                car_plate_num.setText(list.get(INDEX_CARPLATE_NUM));
-                car_type.setText(list.get(INDEX_CAR_TYPE));
-                buy_time.setText(list.get(INDEX_BUY_TIME));
-                cargo_capacity.setText(list.get(INDEX_CARGO_CAPACITY));
-                engine_num.setText(list.get(INDEX_ENGINE_NUM));
-                car_owner.setText(list.get(INDEX_CAR_OWNER));
-                passenger_num.setText(list.get(INDEX_PASSENGER_NUM));
+                car_plate_num.setText(list[INDEX_CARPLATE_NUM]);
+                car_type.setText(list[INDEX_CAR_TYPE]);
+                buy_time.setText(list[INDEX_BUY_TIME]);
+                cargo_capacity.setText(list[INDEX_CARGO_CAPACITY]);
+                engine_num.setText(list[INDEX_ENGINE_NUM]);
+                car_owner.setText(list[INDEX_CAR_OWNER]);
+                passenger_num.setText(list[INDEX_PASSENGER_NUM]);
             }
 
 
