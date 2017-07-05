@@ -74,6 +74,7 @@ class MapUpdaterThread extends Thread {
             try {
                 return routeDBDelegate.getAllRouteInfo();
             } catch (IOException e) {
+                e.printStackTrace();
                 if (onNetworkError != null)
                     onNetworkError.handleMessage(new Bundle());
                 mSleep(10000);

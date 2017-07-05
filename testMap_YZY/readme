@@ -1,0 +1,22 @@
+本测试包用于搭建本地服务器，为地图部分提供数据。
+
+myTestcase.py 是我自己撰写的数据，车辆会移动
+anotherTestcase.py 使用github上的静态数据，车辆不会移动。
+
+运行环境:
+python 2.7
+依赖包 web.py 
+
+运行方法：
+
+$ python <文件名> 127.0.0.1:<端口>
+
+如
+
+$ python myTestcase.py 127.0.0.1:1234
+
+或
+
+$ python anotherTestcase.py 127.0.0.1:1234
+
+！！注意安卓模拟器中localhost跟电脑的localhost不一样，连接电脑的localhost需要访问的IP地址是10.0.2.2
