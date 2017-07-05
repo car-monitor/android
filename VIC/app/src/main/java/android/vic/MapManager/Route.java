@@ -50,9 +50,9 @@ class Route {
                     public void handleMessage(Bundle bundle) {
                         List<RouteSectionInfo> secList = Route.this.routeInfo.getRouteSectionInfoList();
                         RouteSectionInfo lastSec = secList.get(secList.size() - 1);
-                        bundle.putInt("order_id", Route.this.routeInfo.getId());
-                        bundle.putInt("car_id", lastSec.getCar_id());
-                        bundle.putInt("driver_id", lastSec.getDriver_id());
+                        bundle.putString("order_id", Integer.toString(Route.this.routeInfo.getId()));
+                        bundle.putString("car_id", Integer.toString(lastSec.getCar_id()));
+                        bundle.putString("driver_id", Integer.toString(lastSec.getDriver_id()));
                         Route.this.onCarClicked.handleMessage(bundle);
                     }
                 });

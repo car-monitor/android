@@ -112,7 +112,7 @@ public class Login extends AppCompatActivity {
         Toast.makeText(Login.this, "登录成功！", Toast.LENGTH_SHORT).show();
         // Guobao
         // 登录成功，调用消息功能
-        messagePart();
+        // messagePart();
         Intent intent = new Intent(Login.this, MainActivity.class);
         startActivity(intent);
         if (1==1) return;

@@ -25,7 +25,9 @@ import okhttp3.Response;
  * Created by yangzy on 2017/7/2.
  */
 class RouteDBDelegateImpl implements RouteDBDelegate {
-    static private final String HOSTNAME = "10.0.2.2:1304";
+//    static private final String HOSTNAME = "10.0.2.2:1304";
+    static private final String HOSTNAME = "192.168.19.1:1234";
+
     static private final String GET_ALL_ORDERS = "getorders";
     private final OkHttpClient client = new OkHttpClient();
 
