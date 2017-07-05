@@ -22,7 +22,7 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="us7PdDbkYxtK7V2goiYQANo2A4ei91XP" />
-        <!--android:value="W4mq7m4HvKbEE2Oh04PMsyD9sBBj2QrQ" />-->
+        <!-- android:value="W4mq7m4HvKbEE2Oh04PMsyD9sBBj2QrQ" /> -->
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -31,18 +31,21 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter></activity>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".Login"
             android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ShowUserInfo"
             android:launchMode="singleInstance"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity android:name=".CarDetailActivity"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".CarDetailActivity" />
+        <activity android:name=".DriverDetailActivity" />
+        <activity android:name=".OrderDetailActivity" />
+        <activity android:name=".DetailListActivity"></activity>
     </application>
 
 </manifest>

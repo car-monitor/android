@@ -223,10 +223,19 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_cars) {
             // TODO 跳转到车辆列表页面
+            Intent intent= new Intent(MainActivity.this, DetailListActivity.class);
+            intent.putExtra("type", DetailListActivity.TYPE_CAR);
+            startActivity(intent);
         } else if (id == R.id.nav_drivers) {
             // TODO 跳转到驾驶员列表页面
+            Intent intent= new Intent(MainActivity.this, DetailListActivity.class);
+            intent.putExtra("type", DetailListActivity.TYPE_DRIVER);
+            startActivity(intent);
         } else if (id == R.id.nav_bill) {
             // TODO 跳转到订单列表页面
+            Intent intent= new Intent(MainActivity.this, DetailListActivity.class);
+            intent.putExtra("type", DetailListActivity.TYPE_ORDER);
+            startActivity(intent);
         } else if (id == R.id.nav_exit) {
             // 登出
             Logout logoutTask = new Logout();
