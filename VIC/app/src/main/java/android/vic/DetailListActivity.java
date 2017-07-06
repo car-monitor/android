@@ -52,8 +52,6 @@ public class DetailListActivity extends AppCompatActivity {
         swipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.SRL);
         listView= (ListView) findViewById(R.id.lv);
         adapter= new ListViewAdapter(this, list, type);
-        list.add(new ListItem("a", "b", "c"));
-        list.add(new ListItem("sd", "a", "fg"));
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

@@ -23,9 +23,10 @@ public class DriverDetailActivity extends AppCompatActivity {
     private static int INDEX_UNIT_ID= 2;
     private static int INDEX_ADDRESS= 3;
     private static int INDEX_PHONE= 4;
+    private static int INDEX_JOBNO= 5;
 
 
-    public TextView driver_id, department_id, unit_id, address, phone;
+    public TextView driver_id, department_id, unit_id, address, phone, jobNo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,7 @@ public class DriverDetailActivity extends AppCompatActivity {
         unit_id= (TextView) findViewById(R.id.unit_id);
         address= (TextView) findViewById(R.id.driver_address);
         phone= (TextView) findViewById(R.id.driver_phone);
+        jobNo= (TextView) findViewById(R.id.jobNo);
     }
 
     private class GetDriverDetail extends AsyncTask<Integer, Void, ArrayList<String>> {
@@ -54,7 +56,7 @@ public class DriverDetailActivity extends AppCompatActivity {
 
             HttpURLConnection connection= null;
             try {
-                URL url = new URL(CurrentUser.IP + "getuser?id="+ integers[0]);
+                URL url = new URL(CurrentUser.IP + "getuser/"+ integers[0]);
                 connection= (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setConnectTimeout(5000);
@@ -82,6 +84,7 @@ public class DriverDetailActivity extends AppCompatActivity {
                     list.add(INDEX_UNIT_ID, user.getString("appartmentID"));
                     list.add(INDEX_ADDRESS, user.getString("address"));
                     list.add(INDEX_PHONE, user.getString("phone"));
+                    list.add(INDEX_JOBNO, user.getString("jobNo"));
                     return list;
                 }
 
@@ -106,6 +109,7 @@ public class DriverDetailActivity extends AppCompatActivity {
                 unit_id.setText(list.get(INDEX_UNIT_ID));
                 address.setText(list.get(INDEX_ADDRESS));
                 phone.setText(list.get(INDEX_PHONE));
+                jobNo.setText(list.get(INDEX_JOBNO));
             }
 
         }

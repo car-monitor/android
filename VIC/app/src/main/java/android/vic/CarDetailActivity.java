@@ -69,7 +69,7 @@ public class CarDetailActivity extends AppCompatActivity {
 
             HttpURLConnection connection= null;
             try {
-                URL url = new URL(CurrentUser.IP + "getcar?id="+ integers[0]);
+                URL url = new URL(CurrentUser.IP + "getcar/"+ integers[0]);
                 connection= (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setConnectTimeout(5000);
