@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -106,6 +107,16 @@ public class Login extends AppCompatActivity {
     }
 
     public void login(final String username, String password) {
+        // 本地登录功能
+        // 切换成服务器登录请注释掉这段代码
+        /*------------------------------*/
+        CurrentUser.getInstance(context).saveLoginInfo(username, "Cookie", 123, 1, 1, "C1",
+                "123123123", "10086", "photoURL", "ADDRESS", "COMPANY", "department", 9123, context);
+        Toast.makeText(Login.this, "本地登录", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        if (1 == 1) return;
+        /*------------------------------*/
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(4, TimeUnit.SECONDS)
                 .writeTimeout(4, TimeUnit.SECONDS)
@@ -152,6 +163,14 @@ public class Login extends AppCompatActivity {
     }
 
     private void getCompany(int companyID) {
+        // 本地数据
+        // 如果要改成服务器，请注释掉本段代码
+        /*------------------------------------*/
+        company = "company name";
+        CurrentUser.getInstance(context).setCompany(company);
+        if (1 == 1) return;
+        /*------------------------------------*/
+
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(4, TimeUnit.SECONDS)
                 .writeTimeout(4, TimeUnit.SECONDS)
@@ -186,6 +205,13 @@ public class Login extends AppCompatActivity {
     }
 
     private void getApartment(int apartmentID) {
+        // 本地数据
+        // 如果要改成服务器，请注释掉本段代码
+        /*------------------------------------*/
+        department = "department name";
+        CurrentUser.getInstance(context).setCompany(department);
+        if (1 == 1) return;
+        /*------------------------------------*/
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(4, TimeUnit.SECONDS)
                 .writeTimeout(4, TimeUnit.SECONDS)
@@ -225,26 +251,6 @@ public class Login extends AppCompatActivity {
     private static final String filePath = Environment.getExternalStorageDirectory() + "/storage/emulated/0/";
     private static final String fileName = "log.txt";
     private static IntentFilter dynamic_filter = new IntentFilter();
-
-    //线程用于发送动态广播
-    private Handler handler = new Handler() {
-        public void handleMessage(Message message) {
-            switch (message.what) {
-                case UPDATE_CONTENT:
-                    ArrayList<String> s = (ArrayList<String>) message.obj;
-                    Bundle bundle = new Bundle();
-                    //发送标题和内容字符串数组
-                    bundle.putStringArrayList("message", s);
-                    Intent intent = new Intent(DYNAMIC);
-                    intent.putExtras(bundle);
-                    //用到思全代码
-                    sendBroadcast(intent);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
 
     //将数据写入txt文件
     private void inData(String context) {
@@ -301,8 +307,29 @@ public class Login extends AppCompatActivity {
         }
     }
 
+    //用于发送动态广播
+    private void sendMessage(Message message) {
+        switch (message.what) {
+            case UPDATE_CONTENT:
+                ArrayList<String> s = (ArrayList<String>) message.obj;
+                Bundle bundle = new Bundle();
+                //发送标题和内容字符串数组
+                bundle.putStringArrayList("message", s);
+                Intent intent = new Intent(DYNAMIC);
+                intent.putExtras(bundle);
+                //用到思全代码
+                sendBroadcast(intent);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private Handler handler = new Handler();
+    private Runnable runnable;
 
     private void messagePart() {
+        Log.e("MESSAGE", "message part");
         //获得单例类
         final CurrentUser currentUser = CurrentUser.getInstance(this);
         dynamic_filter.addAction(DYNAMIC);
@@ -311,15 +338,44 @@ public class Login extends AppCompatActivity {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected() && currentUser.isLogan()) {
-            //建立线程
-            new Thread(new Runnable() {
+            runnable = new Runnable() {
                 @Override
                 public void run() {
+                    // 本地数据
+                    // 如果要改成服务器，请注释掉本段代码
+                    /*------------------------------------*/
+
+                    Log.e("MESSAGE", "SEND");
+
+                    int max=100;
+                    int min=1;
+                    Random random = new Random();
+
+                    int num = random.nextInt(max)%(max-min+1) + min;
+
+                    if (num > 90) {
+                        ArrayList<String> s_ = new ArrayList<>();
+                        s_.add("TITLE");
+                        s_.add("CONTENT");
+//                        if (s_.size() != 0) {
+//                            inData(s_.get(0));
+//                            inData(s_.get(1));
+//                            Message message = new Message();
+//                            message.what = UPDATE_CONTENT;
+//                            message.obj = s_;
+//                            sendMessage(message);
+//                        }
+                    }
+                    handler.postDelayed(runnable, 5000);
+
+                    if (1 == 1) return;
+                    /*------------------------------------*/
+
+
                     // Guobao 修改
                     // 这里我把brocastRec的对象改到了BrocastRec里，做成了一个静态变量
                     // 在这个地方会被注册，在主页面的登出那里可以注销
-                    // DEBUG
-                    Log.e("MESSAGE", "SEND");
+                    // 第二次修改：在这里进行请求获取数据后，再进行广播和写入文件，然后递归式调用自己
                     if (BrocastRec.brocastRec == null)
                         BrocastRec.brocastRec = new BrocastRec();
                     registerReceiver(BrocastRec.brocastRec, dynamic_filter);
@@ -339,18 +395,19 @@ public class Login extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     //写入数据
-//                    if (s.size() != 0) {
-//                        inData(s.get(0));
-//                        inData(s.get(1));
-//                        Message message = new Message();
-//                        message.what = UPDATE_CONTENT;
-//                        message.obj = s;
-//                        handler.sendMessage(message);
-//                    }
-                    //每隔0.5秒请求一次
-                    handler.postDelayed(this, 5000);
+                    if (s.size() != 0) {
+                        inData(s.get(0));
+                        inData(s.get(1));
+                        Message message = new Message();
+                        message.what = UPDATE_CONTENT;
+                        message.obj = s;
+                        sendMessage(message);
+                    }
+                    handler.postDelayed(runnable, 5000);
                 }
-            }).start();
+            };
+            handler.post(runnable);
+            Log.e("MESSAGE", "RUN");
         } else {
             Toast.makeText(Login.this, "当前没有可用网络！", Toast.LENGTH_SHORT).show();
         }

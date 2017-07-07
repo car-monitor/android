@@ -52,8 +52,6 @@ public class DetailListActivity extends AppCompatActivity {
         swipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.SRL);
         listView= (ListView) findViewById(R.id.lv);
         adapter= new ListViewAdapter(this, list, type);
-        list.add(new ListItem("a", "b", "c"));
-        list.add(new ListItem("sd", "a", "fg"));
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -91,6 +89,18 @@ public class DetailListActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... integers) {
 
+            // 本地数据
+            // 如果要改成服务器，请注释掉本段代码
+            /*------------------------------------*/
+            if (type== TYPE_CAR)
+                    list.add(new ListItem("car-id", "car-plate", null));
+            else if (type== TYPE_DRIVER)
+                list.add(new ListItem("driver-id", "username-plate", null));
+            else if (type== TYPE_ORDER)
+                list.add(new ListItem("order-id", "car-id", "driver-id"));
+            if (1==1) return true;
+            /*------------------------------------*/
+
             HttpURLConnection connection= null;
             try {
                 URL url= null;
@@ -105,6 +115,7 @@ public class DetailListActivity extends AppCompatActivity {
                 connection= (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setConnectTimeout(5000);
+                connection.setRequestProperty("Cookie", CurrentUser.getInstance(getApplicationContext()).getCookie());
                 connection.connect();
 
                 int statusCode= connection.getResponseCode();

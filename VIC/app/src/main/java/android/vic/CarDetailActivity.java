@@ -67,9 +67,23 @@ public class CarDetailActivity extends AppCompatActivity {
         @Override
         protected String[] doInBackground(Integer... integers) {
 
+            // 本地数据
+            // 如果要改成服务器，请注释掉本段代码
+            /*------------------------------------*/
+            String[] list_= new String[7];
+            list_[INDEX_CARPLATE_NUM]   = "carPlate";
+            list_[INDEX_CAR_TYPE]       = "carType";
+            list_[INDEX_BUY_TIME]       = "buyTime";
+            list_[INDEX_CARGO_CAPACITY] = "cargoCapacity";
+            list_[INDEX_ENGINE_NUM]     = "engineNo";
+            list_[INDEX_CAR_OWNER]      = "owner";
+            list_[INDEX_PASSENGER_NUM]  = "passengerNum";
+            if (1 == 1) return list_;
+            /*------------------------------------*/
+
             HttpURLConnection connection= null;
             try {
-                URL url = new URL(CurrentUser.IP + "getcar?id="+ integers[0]);
+                URL url = new URL(CurrentUser.IP + "getcar/"+ integers[0]);
                 connection= (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setConnectTimeout(5000);

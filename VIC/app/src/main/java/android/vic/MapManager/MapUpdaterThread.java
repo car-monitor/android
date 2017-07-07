@@ -37,7 +37,8 @@ class MapUpdaterThread extends Thread {
                     MapUpdaterThread.this.onCarClick.handleMessage(bundle);
             }
         });
-        RouteDBDelegate routeDBDelegate = new RouteDBDelegateImpl();
+        // RouteDBDelegate routeDBDelegate = new RouteDBDelegateImpl();
+        RouteDBDelegate routeDBDelegate = new RouteDBDelegateStub();
         RouteListManager routeListManager = new RouteListManager(getAllRouteInfo(routeDBDelegate), routeBuilder);
 
         // 每3s从后台服务器获得车辆位置数据，并加载到地图上

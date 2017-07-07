@@ -28,12 +28,19 @@ public class OrderDetailActivity extends AppCompatActivity {
     private static int INDEX_ORDER_ID= 2;
     private static int INDEX_PLACE_OF_DEPARTURE= 3;
     private static int INDEX_DESTINATION= 4;
-    private static int INDEX_ROUTE_INFO= 5;
-    private static int INDEX_KEY_POINT= 6;
-    private static int INDEX_ORDER_TIME= 7;
+    private static int INDEX_STARTTIME= 5;
+    private static int INDEX_ENDTIME= 6;
+    private static int INDEX_NAME1= 7;
+    private static int INDEX_PHONE1= 8;
+    private static int INDEX_ADDRESS1= 9;
+    private static int INDEX_NAME2= 11;
+    private static int INDEX_PHONE2= 12;
+    private static int INDEX_ADDRESS2= 13;
 
 
-    public TextView car_id, driver_id, order_id, place_of_departure, destinattion, route_info, key_point, order_time;
+
+    public TextView car_id, driver_id, order_id, place_of_departure, destinattion, starttime, endtime, addressorName,
+            addressorPhone, addressorAddress, addresseeName, addresseePhone, addresseeAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +61,14 @@ public class OrderDetailActivity extends AppCompatActivity {
         order_id= (TextView) findViewById(R.id.order_id);
         place_of_departure= (TextView) findViewById(R.id.place_of_departure);
         destinattion= (TextView) findViewById(R.id.destination);
-        route_info= (TextView) findViewById(R.id.route_info);
-        key_point= (TextView) findViewById(R.id.key_point);
-        order_time= (TextView) findViewById(R.id.order_time);
+        starttime= (TextView) findViewById(R.id.start_time);
+        endtime= (TextView) findViewById(R.id.end_time);
+        addressorName= (TextView) findViewById(R.id.addressorName);
+        addressorPhone= (TextView) findViewById(R.id.addressorPhone);
+        addressorAddress= (TextView) findViewById(R.id.addressorAddress);
+        addresseeName= (TextView) findViewById(R.id.addresseeName);
+        addresseePhone= (TextView) findViewById(R.id.addresseePhone);
+        addresseeAddress= (TextView) findViewById(R.id.addresseeAddress);
     }
 
     private class GetOrderDetail extends AsyncTask<Integer, Void, ArrayList<String>> {
@@ -64,9 +76,29 @@ public class OrderDetailActivity extends AppCompatActivity {
         @Override
         protected ArrayList<String> doInBackground(Integer... integers) {
 
+            // 本地数据
+            // 如果要改成服务器，请注释掉本段代码
+            /*------------------------------------*/
+            ArrayList<String> list_= new ArrayList<>();
+            list_.add(INDEX_CAR_ID, "carID");
+            list_.add(INDEX_DRIVER_ID, "driverId");
+            list_.add(INDEX_ORDER_ID, "id");
+            list_.add(INDEX_PLACE_OF_DEPARTURE, "startLongitude"+ ", "+ "startLatitude");
+            list_.add(INDEX_DESTINATION, "endLongitude"+ ", "+ "endLatitude");
+            list_.add(INDEX_STARTTIME, "startTime");
+            list_.add(INDEX_ENDTIME, "endTime");
+            list_.add(INDEX_NAME1, "addressorName");
+            list_.add(INDEX_NAME2, "addresseeName");
+            list_.add(INDEX_PHONE1, "addressorPhone");
+            list_.add(INDEX_PHONE2, "addresseePhone");
+            list_.add(INDEX_ADDRESS1, "addressorAddress");
+            list_.add(INDEX_ADDRESS2, "addresseeAddress");
+            if (1 == 1) return list_;
+            /*------------------------------------*/
+
             HttpURLConnection connection= null;
             try {
-                URL url = new URL(CurrentUser.IP + "getorder?id="+ integers[0]);
+                URL url = new URL(CurrentUser.IP + "getorder/"+ integers[0]);
                 connection= (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setConnectTimeout(5000);
@@ -92,11 +124,16 @@ public class OrderDetailActivity extends AppCompatActivity {
                     list.add(INDEX_CAR_ID, order.getString("carID"));
                     list.add(INDEX_DRIVER_ID, order.getString("driverId"));
                     list.add(INDEX_ORDER_ID, order.getString("id"));
-                    list.add(INDEX_PLACE_OF_DEPARTURE, "------");
-                    list.add(INDEX_DESTINATION, "------");
-                    list.add(INDEX_ROUTE_INFO, "------");
-                    list.add(INDEX_KEY_POINT, "------");
-                    list.add(INDEX_ORDER_TIME, "-----");
+                    list.add(INDEX_PLACE_OF_DEPARTURE, order.getString("startLongitude")+ ", "+ order.getString("startLatitude"));
+                    list.add(INDEX_DESTINATION, order.getString("endLongitude")+ ", "+ order.getString("endLatitude"));
+                    list.add(INDEX_STARTTIME, order.getString("startTime"));
+                    list.add(INDEX_ENDTIME, order.getString("endTime"));
+                    list.add(INDEX_NAME1, order.getString("addressorName"));
+                    list.add(INDEX_NAME2, order.getString("addresseeName"));
+                    list.add(INDEX_PHONE1, order.getString("addressorPhone"));
+                    list.add(INDEX_PHONE2, order.getString("addresseePhone"));
+                    list.add(INDEX_ADDRESS1, order.getString("addressorAddress"));
+                    list.add(INDEX_ADDRESS2, order.getString("addresseeAddress"));
                     return list;
                 }
 
@@ -120,10 +157,14 @@ public class OrderDetailActivity extends AppCompatActivity {
                 driver_id.setText(list.get(INDEX_DRIVER_ID));
                 order_id.setText(list.get(INDEX_ORDER_ID));
                 place_of_departure.setText(list.get(INDEX_PLACE_OF_DEPARTURE));
-                destinattion.setText(list.get(INDEX_DESTINATION));
-                route_info.setText(list.get(INDEX_ROUTE_INFO));
-                key_point.setText(list.get(INDEX_KEY_POINT));
-                order_time.setText(list.get(INDEX_ORDER_TIME));
+                starttime.setText(list.get(INDEX_DESTINATION));
+                endtime.setText(list.get(INDEX_DESTINATION));
+                addressorName.setText(list.get(INDEX_NAME1));
+                addressorPhone.setText(list.get(INDEX_PHONE1));
+                addressorAddress.setText(list.get(INDEX_ADDRESS1));
+                addresseeName.setText(list.get(INDEX_NAME2));
+                addresseePhone.setText(list.get(INDEX_PHONE2));
+                addresseeAddress.setText(list.get(INDEX_ADDRESS2));
             }
 
         }
