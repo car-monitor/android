@@ -148,13 +148,6 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void handleMessage(Bundle bundle) {
                         textView_City.setText(bundle.getString("city"));
-                        // 还可以获得以下这些信息
-//                        Toast.makeText(MainActivity.this, bundle.getString("country"), Toast.LENGTH_LONG).show();
-//                        Toast.makeText(MainActivity.this, bundle.getString("province"), Toast.LENGTH_LONG).show();
-//                        Toast.makeText(MainActivity.this, bundle.getString("city"), Toast.LENGTH_LONG).show();
-//                        Toast.makeText(MainActivity.this, bundle.getString("district"), Toast.LENGTH_LONG).show();
-//                        Toast.makeText(MainActivity.this, bundle.getString("street"), Toast.LENGTH_LONG).show();
-
                     }
                 });
             }
@@ -274,7 +267,7 @@ public class MainActivity extends AppCompatActivity
 
                 connection.setConnectTimeout(4000);
                 connection.setRequestMethod("GET");
-                connection.setRequestProperty("Cookie", CurrentUser.getInstance(getApplicationContext()).getSessionID());
+                connection.setRequestProperty("Cookie", CurrentUser.getInstance(getApplicationContext()).getCookie());
                 connection.connect();
 
                 int statusCode = connection.getResponseCode();

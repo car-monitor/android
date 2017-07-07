@@ -25,8 +25,6 @@ public class JsonParse {
         List<Contexts> clists = new ArrayList<>();
         byte[] data = readParse(context);
         JSONObject jsonObject = new JSONObject(new String(data));
-        // DEBUG
-        Log.e("JSONPARSE", jsonObject.toString());
 
         String string = jsonObject.getString("infos");
         JSONArray array = new JSONArray(string);
@@ -49,7 +47,7 @@ public class JsonParse {
         URL url = new URL(CurrentUser.IP + "getmessage");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
-        connection.setRequestProperty("cookie", currentUser.getSessionID());
+        connection.setRequestProperty("cookie", currentUser.getCookie());
         InputStream inputStream = connection.getInputStream();
         while (true) {
             len = inputStream.read(data);

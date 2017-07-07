@@ -28,7 +28,7 @@ class CurrentUser {
     }
 
     // 获取各类信息
-    public String getSessionID()  { return sessionID; }
+    public String getCookie()     { return cookie; }
     public String getUsername()   { return username; }
     public int    getId()         { return id; }
     public String getAuthority()  { return authority; }
@@ -43,45 +43,45 @@ class CurrentUser {
     public String getJobNo()      { return Integer.toString(jobNo); }
 
     // 设置单个变量，返回值意味着是否登录，未登录不能修改，且返回值会为false
-    public boolean setSessionID(String sessionID_)   { return sessionID != null && (sessionID  = sessionID_)  != null; }
-    public boolean setUsername(String username_)     { return sessionID != null && (username   = username_)   != null; }
-    public boolean setId(int id_)                    { return sessionID != null && (id         = id_)         != -1; }
+    public boolean setCookie(String cookie_)         { return cookie != null && (cookie     = cookie_)   != null; }
+    public boolean setUsername(String username_)     { return cookie != null && (username   = username_) != null; }
+    public boolean setId(int id_)                    { return cookie != null && (id         = id_)       != -1; }
     // 网络接口提供权限和性别给的是int，但是这个类里保存为string
     public boolean setAuthority(int authority_) {
-        if (sessionID != null && authority_ < 4 && authority_ >= 0) {
+        if (cookie    != null && authority_ < 4 && authority_ >= 0) {
             authority = AuthorityDict.get(authority_);
             return true;
         }
         return false;
     }
     public boolean setSex(int sex_) {
-        if (sessionID != null && (sex_ == 1 || sex_ == 0)) {
+        if (cookie    != null && (sex_ == 1 || sex_ == 0)) {
             sex = sex_ == 1 ? "男" : "女";
             return true;
         } else {
             return false;
         }
     }
-    public boolean setDriverType(String driverType_) { return sessionID != null && (driverType = driverType_) != null; }
-    public boolean setIdentify(String identify_)     { return sessionID != null && (identify   = identify_)   != null; }
-    public boolean setPhone(String phone_)           { return sessionID != null && (phone      = phone_)      != null; }
-    public boolean setPhotoURL(String photoURL_)     { return sessionID != null && (photoURL   = photoURL_)   != null; }
-    public boolean setAddress(String address_)       { return sessionID != null && (address    = address_)    != null; }
-    public boolean setCompany(String company_)       { return sessionID != null && (company    = company_)    != null; }
-    public boolean setApartment(String apartment_)   { return sessionID != null && (apartment  = apartment_)  != null; }
-    public boolean setJobNo(int jobNo_)              { return sessionID != null && (jobNo      = jobNo_)      == jobNo; }
+    public boolean setDriverType(String driverType_) { return cookie != null && (driverType = driverType_) != null; }
+    public boolean setIdentify(String identify_)     { return cookie != null && (identify   = identify_)   != null; }
+    public boolean setPhone(String phone_)           { return cookie != null && (phone      = phone_)      != null; }
+    public boolean setPhotoURL(String photoURL_)     { return cookie != null && (photoURL   = photoURL_)   != null; }
+    public boolean setAddress(String address_)       { return cookie != null && (address    = address_)    != null; }
+    public boolean setCompany(String company_)       { return cookie != null && (company    = company_)    != null; }
+    public boolean setApartment(String apartment_)   { return cookie != null && (apartment  = apartment_)  != null; }
+    public boolean setJobNo(int jobNo_)              { return cookie != null && (jobNo      = jobNo_)      == jobNo; }
 
     // 判断是否已经登录
-    boolean isLogan() { return sessionID != null; }
+    boolean isLogan() { return cookie    != null; }
 
     // 登录后保存用户信息
     // 返回值：保存是否成功
-    boolean saveLoginInfo(String username, String sessionID, int id, int authority, int sex,
+    boolean saveLoginInfo(String username, String cookie, int id, int authority, int sex,
                           String driverType, String identify, String phone, String photoURL,
                           String address, String company, String apartment, int jobNo,
                           Context context) {
         this.username     = username;
-        this.sessionID    = sessionID;
+        this.cookie       = cookie;
         this.id           = id;
         if (authority >= 0 && authority <= 3) this.authority = AuthorityDict.get(authority);
         if (authority == 0 || authority == 1) this.sex       = sex == 1 ? "男" : "女";
@@ -97,7 +97,7 @@ class CurrentUser {
         SharedPreferences preferences = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("username",   this.username);
-        editor.putString("sessionID",  this.sessionID);
+        editor.putString("cookie",  this.cookie   );
         editor.putInt   ("id",         this.id);
         editor.putString("authority",  this.authority);
         editor.putString("sex",        this.sex);
@@ -117,7 +117,7 @@ class CurrentUser {
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
         username   = null;
-        sessionID  = null;
+        cookie     = null;
         id         = -1;
         authority  = null;
         sex        = null;
@@ -136,7 +136,7 @@ class CurrentUser {
         // 读取文件
         SharedPreferences preferences = context.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
         username   = preferences.getString ("username"  , null);
-        sessionID  = preferences.getString ("sessionID" , null);
+        cookie     = preferences.getString ("cookie" , null);
         id         = preferences.getInt    ("id"        , -1);
         authority  = preferences.getString ("authority" , null);
         sex        = preferences.getString ("sex"       , null);
@@ -154,7 +154,7 @@ class CurrentUser {
     private static CurrentUser currentUser = null;
     // 保存的参数列表
     private String username   = null;
-    private String sessionID  = null;
+    private String cookie     = null;
     private int    id         = -1;
     private String authority  = null;
     private String sex        = null;

@@ -70,7 +70,7 @@ public class OrderDetailActivity extends AppCompatActivity {
                 connection= (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setConnectTimeout(5000);
-                connection.setRequestProperty("Cookie", CurrentUser.getInstance(getApplicationContext()).getSessionID());
+                connection.setRequestProperty("Cookie", CurrentUser.getInstance(getApplicationContext()).getCookie());
                 connection.connect();
 
                 int statusCode= connection.getResponseCode();

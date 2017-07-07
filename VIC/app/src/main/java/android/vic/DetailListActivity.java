@@ -105,7 +105,6 @@ public class DetailListActivity extends AppCompatActivity {
                 connection= (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setConnectTimeout(5000);
-                connection.setRequestProperty("Cookie", CurrentUser.getInstance(getApplicationContext()).getSessionID());
                 connection.connect();
 
                 int statusCode= connection.getResponseCode();

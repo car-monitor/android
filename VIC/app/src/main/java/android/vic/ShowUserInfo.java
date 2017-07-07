@@ -26,7 +26,7 @@ public class ShowUserInfo extends AppCompatActivity {
         context = ShowUserInfo.this;
         initView();
         if (CurrentUser.getInstance(this).isLogan()) setInfo();
-        addListenner();
+        addListener();
     }
     private void initView() {
         portrait = (ImageView)findViewById(R.id.iv_logo);
@@ -40,7 +40,7 @@ public class ShowUserInfo extends AppCompatActivity {
         address = (TextView)findViewById(R.id.info_address);
     }
 
-    private void addListenner() {
+    private void addListener() {
         returnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,7 +61,7 @@ public class ShowUserInfo extends AppCompatActivity {
         phone.setText(CurrentUser.getInstance(context).getPhone());
         address.setText(CurrentUser.getInstance(context).getAddress());
     }
-    //// TODO: 2017/7/1 获取头像
+    // TODO: 2017/7/1 获取头像
     private void getPortrait(String URL) {
 
     }

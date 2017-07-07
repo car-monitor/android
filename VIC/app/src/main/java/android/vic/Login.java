@@ -106,17 +106,6 @@ public class Login extends AppCompatActivity {
     }
 
     public void login(final String username, String password) {
-        // DEBUG
-        CurrentUser.getInstance(context).saveLoginInfo(username, "sessionID", 123, 1, 1, "C1", "idtf", "123123","url","addre","com","apart",312,context);
-        Log.e("LOGIN", CurrentUser.getInstance(context).getUsername());
-        Toast.makeText(Login.this, "登录成功！", Toast.LENGTH_SHORT).show();
-        // Guobao
-        // 登录成功，调用消息功能
-        // messagePart();
-        Intent intent = new Intent(Login.this, MainActivity.class);
-        startActivity(intent);
-        if (1==1) return;
-
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(4, TimeUnit.SECONDS)
                 .writeTimeout(4, TimeUnit.SECONDS)
@@ -350,8 +339,6 @@ public class Login extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     //写入数据
-                    // DEBUG
-                    Log.e("MESSAGE", Integer.toString(s.size()));
 //                    if (s.size() != 0) {
 //                        inData(s.get(0));
 //                        inData(s.get(1));
