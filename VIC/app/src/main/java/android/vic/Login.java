@@ -56,9 +56,10 @@ public class Login extends AppCompatActivity {
         company = "default";
         department = "default";
         //朱彦儒
-        //建立SharedPreferences文件
+        //建立SharedPreferences文件，并定义全局变量
         final SharedPreferences sp = this.getSharedPreferences("Context", MODE_PRIVATE);
         final SharedPreferences.Editor editor = sp.edit();
+        final Count count = (Count)getApplicationContext();
 
         // Guobao
         // 先校验是否已经登录
@@ -251,8 +252,6 @@ public class Login extends AppCompatActivity {
     //DYNAMIC名字根据项目文件可改
     private static final String DYNAMIC = "android.vic.brocastrec";
     private static final int UPDATE_CONTENT = 0;
-    //count用于记录消息列表个数
-    private static int count = 0;
     private static IntentFilter dynamic_filter = new IntentFilter();
 
     //用于发送动态广播
@@ -344,10 +343,12 @@ public class Login extends AppCompatActivity {
                     }
                     //写入数据
                     if (s.size() != 0) {
-                        editor.putString("title"+(count+""), s.get(0));
-                        editor.putString("content"+(count+""), s.get(1));
+                        int _count = count.getCount();
+                        editor.putString("title"+(_count+""), s.get(0));
+                        editor.putString("content"+(_count+""), s.get(1));
                         editor.apply();
-                        count++;
+                        _count++;
+                        count.setCount(_count);
                         Message message = new Message();
                         message.what = UPDATE_CONTENT;
                         message.obj = s;
