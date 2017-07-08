@@ -23,11 +23,21 @@ public class ShowUserInfo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.userinfo);
+
+        CurrentUser.activityMap.put("ShowUserInfo", this);
+
         context = ShowUserInfo.this;
         initView();
         if (CurrentUser.getInstance(this).isLogan()) setInfo();
         addListener();
     }
+
+    @Override
+    public void finish() {
+        CurrentUser.activityMap.remove("ShowUserInfo");
+        super.finish();
+    }
+
     private void initView() {
         portrait = (ImageView)findViewById(R.id.iv_logo);
         returnBack = (Button)findViewById(R.id.info_return);

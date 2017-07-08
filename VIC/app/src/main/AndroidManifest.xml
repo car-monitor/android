@@ -27,8 +27,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".Login"
             android:launchMode="singleInstance"
@@ -44,14 +43,14 @@
         <activity
             android:name=".ShowUserInfo"
             android:launchMode="singleInstance"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity android:name=".ContextList"/>
-        <activity android:name=".ContextActivity"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ContextList" />
+        <activity android:name=".ContextActivity" />
         <activity android:name=".CarDetailActivity" />
         <activity android:name=".DriverDetailActivity" />
         <activity android:name=".OrderDetailActivity" />
         <activity android:name=".DetailListActivity" />
+
     </application>
 
 </manifest>

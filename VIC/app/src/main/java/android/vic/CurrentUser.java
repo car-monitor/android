@@ -1,8 +1,12 @@
 package android.vic;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.ArrayMap;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 保存用户信息的单例类
@@ -13,6 +17,7 @@ class CurrentUser {
 
     // IP地址，理论上这个东西最后应该要被删除的
     static String IP = "http://192.168.19.1:1234/";
+    static Map<String, Activity> activityMap = new ArrayMap<>();
 
     // 获取单例，需要给Context，直接调用getApplicationContext()
     static CurrentUser getInstance(Context context) {

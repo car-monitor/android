@@ -42,6 +42,9 @@ public class CarDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        CurrentUser.activityMap.put("CarDetailActivity", this);
+
         Bundle bundle = getIntent().getExtras();
         int car_id = Integer.parseInt(bundle.getString("car_id"));
         setContentView(R.layout.activity_car_detail);
@@ -49,7 +52,12 @@ public class CarDetailActivity extends AppCompatActivity {
         initialView();
 
         new GetCarDetail().execute(car_id);
+    }
 
+    @Override
+    public void finish() {
+        CurrentUser.activityMap.remove("CarDetailActivity");
+        super.finish();
     }
 
     public void initialView() {

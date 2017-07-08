@@ -47,6 +47,9 @@ public class DetailListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_list);
+
+        CurrentUser.activityMap.put("DetailListActivity", this);
+
         Bundle bundle = getIntent().getExtras();
         type= bundle.getInt("type");
         swipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.SRL);
@@ -84,6 +87,12 @@ public class DetailListActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void finish() {
+        CurrentUser.activityMap.remove("DetailListActivity");
+        super.finish();
+    }
+
     private class GetList extends AsyncTask<Void, Void, Boolean> {
 
         @Override
@@ -93,11 +102,11 @@ public class DetailListActivity extends AppCompatActivity {
             // 如果要改成服务器，请注释掉本段代码
             /*------------------------------------*/
             if (type== TYPE_CAR)
-                    list.add(new ListItem("car-id", "car-plate", null));
+                    list.add(new ListItem("10086", "car-plate", null));
             else if (type== TYPE_DRIVER)
-                list.add(new ListItem("driver-id", "username-plate", null));
+                list.add(new ListItem("100861", "username-plate", null));
             else if (type== TYPE_ORDER)
-                list.add(new ListItem("order-id", "car-id", "driver-id"));
+                list.add(new ListItem("100862", "car-id", "driver-id"));
             if (1==1) return true;
             /*------------------------------------*/
 
@@ -178,7 +187,6 @@ public class DetailListActivity extends AppCompatActivity {
             swipeRefreshLayout.setRefreshing(false);
         }
     }
-
 
     private class ListViewAdapter extends BaseAdapter {
         private Context contex;

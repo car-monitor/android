@@ -2,6 +2,7 @@ package android.vic;
 
 import android.Manifest;
 
+import android.app.Activity;
 import android.app.Dialog;
 
 import android.content.Intent;
@@ -42,6 +43,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 import rx.functions.Action1;
 
@@ -56,7 +58,6 @@ public class MainActivity extends AppCompatActivity
     private TextView     textView_City = null;
     private DrawerLayout drawerLayout  = null;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,8 +67,9 @@ public class MainActivity extends AppCompatActivity
         requestPermission();
         SDKInitializer.initialize(getApplicationContext());
         // ------
-
         setContentView(R.layout.activity_main);
+
+        CurrentUser.activityMap.put("MainActivity", this);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -157,6 +159,11 @@ public class MainActivity extends AppCompatActivity
         // ------
     }
 
+    @Override
+    public void finish() {
+        CurrentUser.activityMap.remove("MainActivity");
+        super.finish();
+    }
     private void requestPermission() {
         final Handler handler = new Handler();
         RxPermissions rxPermissions = new RxPermissions(this);
@@ -201,15 +208,18 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        // 其他情况下，双击退出
+        // 双击退出
+        Log.e("BACK", "CLICK");
         if (timestamp == 0) {
-            Toast.makeText(MainActivity.this, "再次点击返回键可退出", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "双击返回键可退出", Toast.LENGTH_SHORT).show();
             timestamp = System.currentTimeMillis();
         } else if (System.currentTimeMillis() - timestamp <= 2000) {
-            System.exit(0);
+            for (Map.Entry<String, Activity> entry: CurrentUser.activityMap.entrySet()) {
+                if (entry.getValue() != null)
+                    entry.getValue().finish();
+            }
         } else {
             timestamp = System.currentTimeMillis();
-
         }
     }
 
@@ -236,7 +246,6 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         } else if (id == R.id.nav_exit) {
             // 登出
-            unregisterReceiver(BrocastRec.brocastRec);
             Logout logoutTask = new Logout();
             logoutTask.execute();
         }
@@ -260,6 +269,12 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected Boolean doInBackground(Void... params) {
+            // 本地数据
+            // 如果要改成服务器，请注释掉本段代码
+            /*------------------------------------*/
+            if (1 == 1) return true;
+            /*------------------------------------*/
+
             HttpURLConnection connection = null;
             try {
                 URL url = new URL(CurrentUser.IP + "logout");
@@ -308,6 +323,11 @@ public class MainActivity extends AppCompatActivity
             }
             if (status) {
                 Toast.makeText(getApplicationContext(), "登出成功", Toast.LENGTH_SHORT).show();
+
+                Login login = (Login)CurrentUser.activityMap.get("Login");
+                if (BrocastRec.brocastRec != null) login.unregisterReceiver(BrocastRec.brocastRec);
+                login.handler.removeCallbacks(login.runnable);
+
                 CurrentUser.getInstance(getApplicationContext()).clearLoginInfo(getApplicationContext());
                 Intent intent = new Intent(MainActivity.this, Login.class);
                 startActivity(intent);

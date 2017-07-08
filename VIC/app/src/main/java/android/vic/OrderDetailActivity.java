@@ -45,6 +45,8 @@ public class OrderDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CurrentUser.activityMap.put("OrderDetailActivity", this);
+
         Bundle bundle = getIntent().getExtras();
         int order_id = Integer.parseInt(bundle.getString("order_id"));
         setContentView(R.layout.activity_order_detail);
@@ -53,6 +55,12 @@ public class OrderDetailActivity extends AppCompatActivity {
 
         new GetOrderDetail().execute(order_id);
 
+    }
+
+    @Override
+    public void finish() {
+        CurrentUser.activityMap.remove("OrderDetailActivity");
+        super.finish();
     }
 
     public void initialView() {

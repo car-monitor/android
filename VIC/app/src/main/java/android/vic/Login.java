@@ -1,14 +1,15 @@
 package android.vic;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Environment;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,10 +22,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -52,14 +52,12 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+
+        CurrentUser.activityMap.put("Login", this);
+
         context = Login.this;
         company = "default";
         department = "default";
-        //朱彦儒
-        //建立SharedPreferences文件，并定义全局变量
-        final SharedPreferences sp = this.getSharedPreferences("Context", MODE_PRIVATE);
-        final SharedPreferences.Editor editor = sp.edit();
-        final Count count = (Count)getApplicationContext();
 
         // Guobao
         // 先校验是否已经登录
@@ -76,28 +74,46 @@ public class Login extends AppCompatActivity {
     // Guobao
     // 双击退出
     private long timestamp = 0;
+
     @Override
     public void onBackPressed() {
         if (timestamp == 0) {
-            Toast.makeText(Login.this, "再次点击返回键可退出", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Login.this, "双击返回键可退出", Toast.LENGTH_SHORT).show();
             timestamp = System.currentTimeMillis();
         } else if (System.currentTimeMillis() - timestamp <= 2000) {
-            System.exit(0);
+            for (Map.Entry<String, Activity> entry : CurrentUser.activityMap.entrySet()) {
+                entry.getValue().finish();
+            }
         } else {
             timestamp = System.currentTimeMillis();
         }
     }
 
+    @Override
+    public void finish() {
+        CurrentUser.activityMap.remove("Login");
+        super.finish();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initView();
+        addListener();
+        password.setText("");
+        imgView.setVisibility(View.INVISIBLE);
+    }
+
     private void initView() {
-        login = (Button) findViewById(R.id.btn_login);
-        username = (EditText) findViewById(R.id.et_username);
-        password = (EditText) findViewById(R.id.et_password);
-        imgView = (ImageView) findViewById(R.id.img_loading);
-        animationDrawable = (AnimationDrawable) imgView.getDrawable();
+        if(login             == null) login             = (Button) findViewById(R.id.btn_login);
+        if(username          == null) username          = (EditText) findViewById(R.id.et_username);
+        if(password          == null) password          = (EditText) findViewById(R.id.et_password);
+        if(imgView           == null) imgView           = (ImageView) findViewById(R.id.img_loading);
+        if(animationDrawable == null) animationDrawable = (AnimationDrawable) imgView.getDrawable();
     }
 
     private void addListener() {
-        login.setOnClickListener(new View.OnClickListener() {
+        if (!login.hasOnClickListeners()) login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (username.getText().toString().equals("") || password.getText().toString().equals(""))
@@ -118,6 +134,7 @@ public class Login extends AppCompatActivity {
         CurrentUser.getInstance(context).saveLoginInfo(username, "Cookie", 123, 1, 1, "C1",
                 "123123123", "10086", "photoURL", "ADDRESS", "COMPANY", "department", 9123, context);
         Toast.makeText(Login.this, "本地登录", Toast.LENGTH_SHORT).show();
+        messagePart();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         if (1 == 1) return;
@@ -256,8 +273,10 @@ public class Login extends AppCompatActivity {
 
     //用于发送动态广播
     private void sendMessage(Message message) {
+        Log.e("MESSAGE", "SEND");
         switch (message.what) {
             case UPDATE_CONTENT:
+                Log.e("MESSAGE", "SEND2");
                 ArrayList<String> s = (ArrayList<String>) message.obj;
                 Bundle bundle = new Bundle();
                 //发送标题和内容字符串数组
@@ -272,8 +291,8 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private Handler handler = new Handler();
-    private Runnable runnable;
+    public Handler handler = new Handler();
+    public Runnable runnable;
 
     private void messagePart() {
         Log.e("MESSAGE", "message part");
@@ -285,33 +304,36 @@ public class Login extends AppCompatActivity {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected() && currentUser.isLogan()) {
+            //朱彦儒
+            //建立SharedPreferences文件，并定义全局变量
+            final SharedPreferences sp = this.getSharedPreferences("Context", MODE_PRIVATE);
+            final SharedPreferences.Editor editor = sp.edit();
+            final Count count = (Count) getApplicationContext();
             runnable = new Runnable() {
+                int i = 1;
+
                 @Override
                 public void run() {
                     // 本地数据
                     // 如果要改成服务器，请注释掉本段代码
                     /*------------------------------------*/
-
-                    Log.e("MESSAGE", "SEND");
-
-                    int max=100;
-                    int min=1;
-                    Random random = new Random();
-
-                    int num = random.nextInt(max)%(max-min+1) + min;
-
-                    if (num > 90) {
-                        ArrayList<String> s_ = new ArrayList<>();
-                        s_.add("TITLE");
-                        s_.add("CONTENT");
-//                        if (s_.size() != 0) {
-//                            inData(s_.get(0));
-//                            inData(s_.get(1));
-//                            Message message = new Message();
-//                            message.what = UPDATE_CONTENT;
-//                            message.obj = s_;
-//                            sendMessage(message);
-//                        }
+                    if (BrocastRec.brocastRec == null) BrocastRec.brocastRec = new BrocastRec();
+                    if (currentUser.isLogan()) registerReceiver(BrocastRec.brocastRec, dynamic_filter);
+                    ArrayList<String> s_ = new ArrayList<>();
+                    s_.add("TITLE" + i);
+                    s_.add("CONTENT");
+                    i++;
+                    if (s_.size() != 0) {
+                        int _count = count.getCount();
+                        editor.putString("title" + (_count + ""), s_.get(0));
+                        editor.putString("content" + (_count + ""), s_.get(1));
+                        editor.apply();
+                        _count++;
+                        count.setCount(_count);
+                        Message message = new Message();
+                        message.what = UPDATE_CONTENT;
+                        message.obj = s_;
+                        sendMessage(message);
                     }
                     handler.postDelayed(runnable, 5000);
 
@@ -344,8 +366,8 @@ public class Login extends AppCompatActivity {
                     //写入数据
                     if (s.size() != 0) {
                         int _count = count.getCount();
-                        editor.putString("title"+(_count+""), s.get(0));
-                        editor.putString("content"+(_count+""), s.get(1));
+                        editor.putString("title" + (_count + ""), s.get(0));
+                        editor.putString("content" + (_count + ""), s.get(1));
                         editor.apply();
                         _count++;
                         count.setCount(_count);

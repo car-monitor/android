@@ -1,6 +1,7 @@
 package android.vic;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,8 @@ public class ContextList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.context_list);
+
+        CurrentUser.activityMap.put("ContextList", this);
         
         final SharedPreferences sp = getSharedPreferences("Context", MODE_PRIVATE);
         final Count count = (Count)getApplicationContext();
@@ -59,5 +62,11 @@ public class ContextList extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void finish() {
+        CurrentUser.activityMap.remove("ContextList");
+        super.finish();
     }
 }

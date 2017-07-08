@@ -31,13 +31,22 @@ public class DriverDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_driver_detail);
+
+        CurrentUser.activityMap.put("DriverDetailActivity", this);
+
         Bundle bundle = getIntent().getExtras();
         int driver_id = Integer.parseInt(bundle.getString("driver_id"));
-        setContentView(R.layout.activity_driver_detail);
 
         initialView();
 
         new GetDriverDetail().execute(driver_id);
+    }
+
+    @Override
+    public void finish() {
+        CurrentUser.activityMap.remove("DriverDetailActivity");
+        super.finish();
     }
 
     public void initialView() {

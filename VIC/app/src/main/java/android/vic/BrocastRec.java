@@ -21,7 +21,8 @@ public class BrocastRec extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(intent.getAction().equals(DYNAMIC)) {
+
+        if (intent.getAction().equals(DYNAMIC)) {
             Bundle bundle = intent.getExtras();
             ArrayList<String> str = bundle.getStringArrayList("message");
 
@@ -42,7 +43,7 @@ public class BrocastRec extends BroadcastReceiver {
                     .setAutoCancel(true).setContentIntent(contentIntent);
             Notification notification = builder.build();
             // notification.setLatestEventInfo(this, "内容提示：", "我就是一个测试文件", pendingIntent);
-            nm.notify(0,notification);
+            nm.notify(0, notification);
         }
 
     }
