@@ -24,40 +24,29 @@ import java.util.Map;
  */
 
 public class ContextList extends AppCompatActivity {
-    private static final String filePath = Environment.getExternalStorageDirectory() + "/storage/emulated/0/";
-    private static final String fileName = "log.txt";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.context_list);
+        
+        final SharedPreferences sp = getSharedPreferences("Context", MODE_PRIVATE);
+        final Count count = (Count)getApplicationContext();
 
+        int _count = count.getCount();
         ListView Context_list = (ListView)findViewById(R.id.context_list);
         final List<Map<String, Object>> data = new ArrayList<>();
         final List<Map<String, Object>> _data = new ArrayList<>();
-        //一行一行地读取txt文件数据
-        File file = new File(filePath+fileName);
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String tempString;
-            while ((tempString = reader.readLine()) != null) {
-                //将读取的标题String加到data里面
-                Map<String, Object> temp = new LinkedHashMap<>();
-                temp.put("title", tempString);
-                data.add(temp);
-                //将读取的内容String加到_data里面，但不显示出来
-                tempString = reader.readLine();
-                Map<String, Object> _temp = new LinkedHashMap<>();
-                _temp.put("content", tempString);
-                _data.add(_temp);
-            }
-            reader.close();
-            final SimpleAdapter simpleAdapter = new SimpleAdapter(this, data, R.layout.context_item,
-                    new String[] {"title"}, new int[] {R.id.contexts});
-            Context_list.setAdapter(simpleAdapter);
-        } catch (IOException e) {
-            e.printStackTrace();
+        for(int i = 0; i < _count; i++) {
+            Map<String, Object> temp = new LinkedHashMap<>();
+            temp.put("title", sp.getString("title"+(i+""), "default"));
+            data.add(temp);
+            Map<String, Object> _temp = new LinkedHashMap<>();
+            _temp.put("content", sp.getString("content"+(i+""), "default"));
+            _data.add(_temp);
         }
+        final SimpleAdapter simpleAdapter = new SimpleAdapter(this, data, R.layout.context_item,
+                new String[] {"title"}, new int[] {R.id.contexts});
+        Context_list.setAdapter(simpleAdapter);
 
         Context_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
