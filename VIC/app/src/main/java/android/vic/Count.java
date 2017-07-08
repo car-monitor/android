@@ -1,4 +1,4 @@
-package com.example.administrator.carmonitor;
+package android.vic;
 
 import android.app.Application;
 
