@@ -55,6 +55,10 @@ public class Login extends AppCompatActivity {
         context = Login.this;
         company = "default";
         department = "default";
+        //朱彦儒
+        //建立SharedPreferences文件
+        final SharedPreferences sp = this.getSharedPreferences("Context", MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sp.edit();
 
         // Guobao
         // 先校验是否已经登录
@@ -247,65 +251,9 @@ public class Login extends AppCompatActivity {
     //DYNAMIC名字根据项目文件可改
     private static final String DYNAMIC = "android.vic.brocastrec";
     private static final int UPDATE_CONTENT = 0;
-    //手机储存地址，可视情况而改
-    private static final String filePath = Environment.getExternalStorageDirectory() + "/storage/emulated/0/";
-    private static final String fileName = "log.txt";
+    //count用于记录消息列表个数
+    private static int count = 0;
     private static IntentFilter dynamic_filter = new IntentFilter();
-
-    //将数据写入txt文件
-    private void inData(String context) {
-        writeTxtToFile(context);
-    }
-
-    public void writeTxtToFile(String content) {
-        //生成文件夹之后，再生成文件，不然会出错
-        makeFilePath(filePath, fileName);
-
-        String strFilePath = filePath + fileName;
-        // 每次写入时，都换行写
-        String strContent = content + "\r\n";
-        try {
-            File file = new File(strFilePath);
-            if (!file.exists()) {
-                Log.d("TestFile", "Create the file:" + strFilePath);
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
-            RandomAccessFile raf = new RandomAccessFile(file, "rwd");
-            raf.seek(file.length());
-            raf.write(strContent.getBytes());
-            raf.close();
-        } catch (Exception e) {
-            Log.e("TestFile", "Error on write File:" + e);
-        }
-    }
-
-    //生成文件
-    public File makeFilePath(String filePath, String fileName) {
-        File file = null;
-        makeRootDirectory(filePath);
-        try {
-            file = new File(filePath + fileName);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return file;
-    }
-
-    //生成文件夹
-    public static void makeRootDirectory(String filePath) {
-        try {
-            File file = new File(filePath);
-            if (!file.exists()) {
-                file.mkdir();
-            }
-        } catch (Exception e) {
-            Log.i("error:", e + "");
-        }
-    }
 
     //用于发送动态广播
     private void sendMessage(Message message) {
@@ -396,8 +344,10 @@ public class Login extends AppCompatActivity {
                     }
                     //写入数据
                     if (s.size() != 0) {
-                        inData(s.get(0));
-                        inData(s.get(1));
+                        editor.putString("title"+(count+""), s.get(0));
+                        editor.putString("content"+(count+""), s.get(1));
+                        editor.apply();
+                        count++;
                         Message message = new Message();
                         message.what = UPDATE_CONTENT;
                         message.obj = s;
